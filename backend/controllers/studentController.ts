@@ -118,7 +118,7 @@ export const registerStudent = async (req: Request, res: Response): Promise<void
 };
 
 /// Login Student Handler
-export const loginStudent = async (req: Request, res: Response): Promise<> => {
+export const loginStudent = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { studentIdNumber, password } = req.body;
 
@@ -128,24 +128,26 @@ export const loginStudent = async (req: Request, res: Response): Promise<> => {
             .from(students)
             .where(eq(students.studentIdNumber, studentIdNumber))
             .limit(1)
-            .then((result) => result[0]);
+            .then((result) => result[0]); // Access the first result directly
 
         if (!student) {
-            return res.status(404).json({ message: 'Student not found' }); // Added return to exit the function after sending response
+            return res.status(404).json({ message: 'Student not found' });
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, student.password);
 
         if (!isPasswordCorrect) {
-            return res.status(401).json({ message: 'Invalid credentials' }); // Added return to exit the function after sending response
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ studentId: student.id }, JWT_SECRET!, { expiresIn: '1h' });
+        const token = jwt.sign({ studentId: student.id }, process.env.JWT_SECRET!, {
+            expiresIn: '1h',
+        });
 
-        res.status(200).json({ message: 'Login successful', token });
+        return res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         console.error("Login error:", error);
-        res.status(500).json({
+        return res.status(500).json({
             message: 'An error occurred during login.',
             error: error instanceof Error ? error.message : 'Unknown error',
         });
