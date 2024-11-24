@@ -1,3 +1,5 @@
+// backend/config/db.ts
+
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool, PoolClient } from 'pg';
 import * as dotenv from 'dotenv';
@@ -14,14 +16,12 @@ const pool = new Pool({
 
 export const db = drizzle(pool);
 
-const testConnection = async () => {
+export const testConnection = async () => {
     try {
         const client: PoolClient = await pool.connect();
         console.log(`🛢️  Database connected successfully on port ${process.env.DB_PORT}`);
         client.release();
     } catch (err) {
-        console.error('Error to connect to the database', err);
+        console.error('❌ Error to connect to the database', err);
     }
 };
-
-testConnection();
