@@ -47,3 +47,11 @@ Follow the steps below to set up **SchoolHub** locally:
    ```bash
    git clone https://github.com/yourusername/schoolhub.git
    cd schoolhub
+   ```
+2. **Install Dependencies**  
+   ```bash
+   cd backend
+   npm install
+   cd ../frontend
+   npm install
+   ```
