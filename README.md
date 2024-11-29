@@ -55,3 +55,23 @@ Follow the steps below to set up **SchoolHub** locally:
    cd ../frontend
    npm install
    ```
+3. **Set Up Environment Variables**  
+   In the `backend` directory, create a `.env` file and add the following configuration:  
+   ```plaintext
+   DATABASE_URI=<your-database-uri>
+   JWT_SECRET=<your-jwt-secret>
+   ADMIN_PASSWORD=<your-admin-password>
+   PORT=5000
+   ```
+4. **Run the Application**  
+Start both the `backend` and `frontend` servers:
+```bash
+# Start the backend server
+cd backend
+npm start
+
+# Start the frontend development server
+cd ../frontend
+npm run dev
+```
+
