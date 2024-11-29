@@ -4,11 +4,12 @@
     "target": "ESNext",
     "module": "CommonJS",
     "outDir": "./dist",
-    "rootDir": "./", // No src folder
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types", "./backend/types"]
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
