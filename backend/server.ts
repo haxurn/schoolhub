@@ -12,6 +12,7 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 
+
 setupSwagger(app);
 
 app.get('/', (req: Request, res: Response) => {
