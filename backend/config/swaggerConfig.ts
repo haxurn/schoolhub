@@ -4,7 +4,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
 
-const options = {
+const options: swaggerJSDoc.Options = {
     definition: {
         openapi: '3.0.0',
         info: {
@@ -15,10 +15,25 @@ const options = {
         servers: [
             {
                 url: 'http://localhost:5000/api',
+                description: 'Local server',
+            },
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
             },
         ],
     },
-    apis: ['./routes/*.ts', './controllers/*.ts'], 
+    apis: ['./routes/*.ts', './controllers/*.ts'], // Adjust paths as necessary
 };
 
 const swaggerSpec = swaggerJSDoc(options);
