@@ -75,3 +75,37 @@ cd ../frontend
 npm run dev
 ```
 
+```plaintext
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "primaryContactNumber": "+1234567890",
+    "emailAddress": "john.doe@example.com",
+    "dateOfJoining": "2024-01-01",
+    "fathersName": "Richard Doe",
+    "mothersName": "Jane Doe",
+    "dateOfBirth": "1990-05-15",
+    "maritalStatus": "Single",
+    "qualification": "MBA",
+    "workExperience": "5",
+    "address": "456 Residential Ave, City",
+    "permanentAddress": "789 Permanent St, Hometown",
+    "panNumber": "ABCDE1234F",
+    "epfNumber": "EPF1234567",
+    "basicSalary": "75000",
+    "contractType": "Permanent",
+    "workShift": "Morning",
+    "workLocation": "City Office",
+    "medicalLeaves": "10",
+    "casualLeaves": "8",
+    "maternityLeaves": "0",
+    "sickLeaves": "12",
+    "accountName": "John Doe",
+    "accountNumber": "12345678901234",
+    "bankName": "City Bank",
+    "ifscCode": "IFSC0001234",
+    "password": "your_secure_password",
+    "confirmPassword": "your_secure_password"
+}
+
+```
