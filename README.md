@@ -31,13 +31,6 @@
 - **Notification System**  
   Send alerts and updates via email, SMS, or in-app notifications.
 
-## Tech Stack
-
-- **Frontend**: [React.js](https://reactjs.org/) / [Next.js](https://nextjs.org/)  
-- **Backend**: [Node.js](https://nodejs.org/) / [Express.js](https://expressjs.com/)  
-- **Database**: [MongoDB](https://www.mongodb.com/) / [PostgreSQL](https://www.postgresql.org/)  
-- **Authentication**: [JWT](https://jwt.io/) / OAuth2  
-- **Deployment**: [Docker](https://www.docker.com/), [AWS](https://aws.amazon.com/) / [DigitalOcean](https://www.digitalocean.com/)
 
 ## Installation
 
