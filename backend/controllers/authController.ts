@@ -9,7 +9,6 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
 
     try {
         const admin = await getAdminByUsername(username);
-
         if (!admin) {
             res.status(401).json({ message: 'Invalid username or password' });
             return;
