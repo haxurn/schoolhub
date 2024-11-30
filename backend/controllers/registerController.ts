@@ -128,7 +128,7 @@ export const registerFinanceRegistrar = async (req: Request, res: Response, next
             await trx.insert(usersTable).values(newUser).execute();
         });
 
-        // Generate JWT token for the new finance registrar
+        
         const financeToken = jwt.sign(
             { id: registrarId, username: emailAddress, role: 'finance' },
             process.env.JWT_SECRET as string,

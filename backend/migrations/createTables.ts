@@ -1,11 +1,10 @@
 // backend/migrations/createTables.ts
 
 import { db } from '../config/dbConfig';
-import { rolesTable, usersTable, financeTable } from '../db/tables';
 
 const createTables = async () => {
     try {
-        // Create roles table
+       
         await db.execute(`
             CREATE TABLE IF NOT EXISTS roles (
                 id SERIAL PRIMARY KEY,
@@ -14,7 +13,7 @@ const createTables = async () => {
         `);
         console.log('✔️ Roles table created successfully');
 
-        // Create users table
+    
         await db.execute(`
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
@@ -25,7 +24,7 @@ const createTables = async () => {
         `);
         console.log('✔️ Users table created successfully');
 
-        // Create finance table
+       
         await db.execute(`
             CREATE TABLE IF NOT EXISTS finance (
                 id SERIAL PRIMARY KEY,

@@ -14,10 +14,10 @@ const insertAdminUser = async () => {
             throw new Error('Admin password is not defined. Set ADMIN_PASSWORD in your environment variables.');
         }
 
-        // Hash the password
+        
         const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds);
 
-        // Check for the 'admin' role
+        
         const roleQuery = await db
             .select()
             .from(rolesTable)
@@ -30,7 +30,7 @@ const insertAdminUser = async () => {
 
         const roleId = roleQuery[0].id;
 
-        // Insert the admin user
+        
         await db
             .insert(usersTable)
             .values({

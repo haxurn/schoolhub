@@ -3,8 +3,7 @@ import { getAdminByUsername, comparePassword } from '../models/adminModel';
 import jwt from 'jsonwebtoken';
 import { getFinanceRegistrarByUsername } from '../models/financeRegistrarModel';
 
-// Admin login handler
-// Admin login handler
+
 export const loginAdmin = async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
 
@@ -23,7 +22,7 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
             return;
         }
 
-        // Generate token with role 'admin'
+        
         const token = jwt.sign(
             { id: admin.id, username: admin.username, role: 'admin' },
             process.env.JWT_SECRET as string,
@@ -35,7 +34,7 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
         res.status(500).json({ message: 'Error logging in', error: error.message || error });
     }
 };
-// Finance login handler
+
 export const loginFinanceRegistrar = async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
 
@@ -52,7 +51,6 @@ export const loginFinanceRegistrar = async (req: Request, res: Response): Promis
             return;
         }
 
-        // Generate token
         const token = jwt.sign(
             { id: registrar.id, username: registrar.username, role: 'finance' },
             process.env.JWT_SECRET as string,
