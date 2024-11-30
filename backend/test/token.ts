@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbmlzdHJhdG9yIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMyOTI5ODk1LCJleHAiOjE3MzI5MzM0OTV9.yr37qiXvb10b11x9bY8BNXvUNkWiaZkooR5090EFt1I';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBZG1pbmlzdHJhdG9yIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzMyOTcwMzc1LCJleHAiOjE3MzI5NzM5NzV9.hbtBS71FceIbTgU7i3A4AVYHIfmtKq6Dalg0S5XacJ0';
 
 const secretKey = process.env.JWT_SECRET;
 
