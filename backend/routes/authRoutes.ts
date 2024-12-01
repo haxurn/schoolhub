@@ -60,7 +60,7 @@ const router = express.Router();
  * @swagger
  * /auth/finance:
  *   post:
- *     summary: Login as a finance 
+ *     summary: Login as a finance user
  *     tags: [Finance Authentication]
  *     requestBody:
  *       required: true
@@ -101,7 +101,7 @@ const router = express.Router();
  * @swagger
  * /auth/register-finance:
  *   post:
- *     summary: Register a new Finance Re
+ *     summary: Register a new Finance user
  *     tags: [Registration]
  *     security:
  *       - bearerAuth: []
