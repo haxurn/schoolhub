@@ -54,6 +54,7 @@ Follow the steps below to set up **SchoolHub** locally:
    DATABASE_URI=<your-database-uri>
    JWT_SECRET=<your-jwt-secret>
    ADMIN_PASSWORD=<your-admin-password>
+   SESSION_SECRET=<your-session-secret>
    PORT=5000
    ```
 4. **Run the Application**  
