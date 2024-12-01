@@ -16,14 +16,14 @@ app.use(helmet());
 
 // Set up CSRF protection
 const csrfProtection = csrf({ cookie: true });
-app.use(csrfProtection); // Apply CSRF protection globally (or you can apply it only to specific routes)
+app.use(csrfProtection); 
 
-// Use JSON parsing middleware
+
 app.use(express.json());
 
 const port = process.env.PORT || 5000;
 
-// Set up Swagger for API documentation
+
 setupSwagger(app);
 
 app.get('/', (req: Request, res: Response) => {
@@ -32,12 +32,12 @@ app.get('/', (req: Request, res: Response) => {
     });
 });
 
-// API routes
+
 app.use('/api/auth', authRoutes);
 
 
 app.get('/csrf-token', (req: Request, res: Response) => {
-    // Send CSRF token to client
+
     res.json({ csrfToken: req.csrfToken() });
 });
 
