@@ -2,8 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import csrf from 'csurf';
-import cookieParser from 'cookie-parser';  // Import cookie-parser
-import session from 'express-session';    // Import express-session
+import cookieParser from 'cookie-parser'; 
+import session from 'express-session';    
 import setupSwagger from './config/swaggerConfig';
 import { checkConnection } from './config/dbConfig';
 import authRoutes from './routes/authRoutes';
