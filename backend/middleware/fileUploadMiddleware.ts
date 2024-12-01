@@ -4,7 +4,7 @@
     import multer, { FileFilterCallback } from 'multer';
     import { Request } from 'express';
 
-    // Storage configuration
+   
     const storage = multer.diskStorage({
         destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
             cb(null, 'uploads/');
@@ -16,7 +16,7 @@
         }
     });
 
-    // File type checker
+  
     function checkFileType(file: Express.Multer.File, cb: FileFilterCallback) {
         const filetypes = /jpeg|jpg|png|pdf|svg/;
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -27,11 +27,11 @@
         } else {
             cb(new Error('File upload only supports the following filetypes - jpeg, jpg, png, pdf, svg'));
         }
-    }
+    } 
 
-    // Multer upload middleware
+    
     export const upload = multer({
         storage,
-        limits: { fileSize: 20 * 1024 * 1024 }, // 20MB file size limit
+        limits: { fileSize: 20 * 1024 * 1024 }, 
         fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => checkFileType(file, cb)
     });

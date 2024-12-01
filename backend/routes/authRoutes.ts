@@ -61,7 +61,7 @@ const router = express.Router();
  * /auth/finance:
  *   post:
  *     summary: Login as a finance user
- *     tags: [Finance Authentication]
+ *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:

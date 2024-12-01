@@ -1,6 +1,7 @@
+
 // backend/utils/generateId.ts
 
-export const generateId = (): string => {
-    const id = Math.floor(10000000 + Math.random() * 90000000);
-    return id.toString();
+export const generateIdFinance = (): string => {
+    const id = Math.floor(100000 + Math.random() * 900000);
+    return `FI${id.toString()}`;
 }
