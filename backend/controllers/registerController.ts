@@ -86,7 +86,7 @@ export const registerFinanceRegistrar = async (req: Request, res: Response, next
             contractType,
             workShift,
             workLocation,
-            dateOfLeaving: parseDate(dateOfLeaving), // Use parseDate function
+            dateOfLeaving: parseDate(dateOfLeaving), 
             medicalLeaves,
             casualLeaves,
             maternityLeaves,
