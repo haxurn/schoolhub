@@ -22,5 +22,8 @@
         "vuepress",
         "wscript",
         "XVCJ"
+    ],
+    "conventionalCommits.scopes": [
+        "add frontend "
     ]
 }
