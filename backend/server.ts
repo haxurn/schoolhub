@@ -8,11 +8,12 @@ import setupSwagger from './config/swaggerConfig';
 import { checkConnection } from './config/dbConfig';
 import authRoutes from './routes/authRoutes';
 import { sessionMiddleware } from './middleware/sessionMiddleware';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
-
+app.use(cors({ origin: 'http://localhost:3000', methods: ['GET', 'POST', 'PUT', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization'], }));
 
 app.use(cookieParser());
 
