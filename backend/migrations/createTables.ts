@@ -305,6 +305,119 @@ const createTables = async () => {
                 updated_at TIMESTAMP DEFAULT NOW() NOT NULL
             )
         `);
+        console.log('✔️ Subject table created successfully');
+
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS timetable (
+                id SERIAL PRIMARY KEY,
+                class_id INTEGER REFERENCES class(id) ON DELETE CASCADE, -- Reference to the class
+                section_id INTEGER REFERENCES section(id) ON DELETE CASCADE, -- Reference to the section
+                subject_id INTEGER REFERENCES subject(id) ON DELETE CASCADE, -- Reference to the subject
+                teacher_id INTEGER REFERENCES teacher(id) ON DELETE SET NULL, -- Reference to the teacher
+                day_of_week VARCHAR(20) NOT NULL, -- Day of the week (e.g., Monday, Tuesday)
+                start_time TIME NOT NULL, -- Class start time
+                end_time TIME NOT NULL, -- Class end time
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+            )
+        `);
+        console.log('✔️ Timetable table created successfully');
+
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS homework (
+                id SERIAL PRIMARY KEY,
+                class_id INTEGER REFERENCES class(id) ON DELETE CASCADE, -- Reference to the class
+                section_id INTEGER REFERENCES section(id) ON DELETE CASCADE, -- Reference to the section
+                subject_id INTEGER REFERENCES subject(id) ON DELETE CASCADE, -- Reference to the subject
+                teacher_id INTEGER REFERENCES teacher(id) ON DELETE SET NULL, -- Reference to the teacher
+                title VARCHAR(255) NOT NULL, -- Homework title
+                description TEXT NOT NULL, -- Detailed description of the homework
+                due_date DATE NOT NULL, -- Submission due date
+                attachment VARCHAR(255), -- Path to any attached file (optional)
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL, -- Creation timestamp
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL -- Last updated timestamp
+            )
+        `);
+        console.log('✔️ Homework table created successfully');
+
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS examination (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL, -- Title of the examination (e.g., "Mid-Term Exam")
+                description TEXT, -- Optional detailed description of the exam
+                start_date DATE NOT NULL, -- Start date of the examination
+                end_date DATE NOT NULL, -- End date of the examination
+                class_id INTEGER REFERENCES class(id) ON DELETE CASCADE, -- Reference to the class for the exam
+                section_id INTEGER REFERENCES section(id) ON DELETE CASCADE, -- Reference to the section for the exam
+                subject_id INTEGER REFERENCES subject(id) ON DELETE CASCADE, -- Reference to the subject for the exam
+                max_marks INTEGER NOT NULL, -- Maximum marks for the examination
+                duration TIME NOT NULL, -- Duration of the exam
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL, -- Creation timestamp
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL -- Last updated timestamp
+            )
+        `);
+        console.log('✔️ Examination table created successfully');
+
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS library (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                author VARCHAR(255) NOT NULL,
+                isbn VARCHAR(20) UNIQUE NOT NULL,
+                category VARCHAR(100) NOT NULL,
+                total_copies INTEGER NOT NULL,
+                available_copies INTEGER NOT NULL,
+                published_date DATE,
+                shelf_location VARCHAR(50) NOT NULL,
+                subject_id INTEGER REFERENCES subject(id) ON DELETE SET NULL,
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+            )
+        `);
+        console.log('✔️ Library table created successfully');
+
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS user_library_usage (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES "user"(id) ON DELETE CASCADE,  -- Foreign key to user table (student or teacher)
+                library_id INTEGER REFERENCES library(id) ON DELETE CASCADE,  -- Foreign key to library table
+                borrow_date TIMESTAMP DEFAULT NOW() NOT NULL,  -- Date when the book was borrowed
+                return_date TIMESTAMP,  -- Date when the book was returned (nullable if not returned yet)
+                status VARCHAR(50) DEFAULT 'borrowed' NOT NULL,  -- Current status of the book (borrowed/returned)
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL,  -- Record creation timestamp
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL  -- Last record update timestamp
+            )
+        `);
+        console.log('✔️ User Library Usage table created successfully');
+
+
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS attendance (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES "user"(id) ON DELETE CASCADE,  -- Reference to the user (student/teacher)
+                class_id INTEGER REFERENCES class(id) ON DELETE CASCADE,  -- Reference to the class the user is attending
+                attendance_date DATE NOT NULL,  -- The date of the class session
+                status VARCHAR(50) CHECK (status IN ('present', 'absent', 'excused', 'late')) DEFAULT 'absent' NOT NULL,  -- Status of attendance
+                comments TEXT,  -- Additional comments, e.g., reason for absence
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL,  -- Record creation timestamp
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL  -- Last record update timestamp
+            )
+        `);
+        console.log('✔️ Attendance table created successfully');
+
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS report (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES "user"(id) ON DELETE CASCADE,  -- Reference to the user (student or teacher) this report is for
+                report_type VARCHAR(100) NOT NULL,  -- Type of report (e.g., "performance", "attendance", etc.)
+                content TEXT,  -- Content of the report (could be text or summary)
+                attachment VARCHAR(255),  -- Link to any attached file (e.g., PDF report)
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL,  -- Timestamp of when the report was created
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL  -- Timestamp of when the report was last updated
+            )
+        `);
+        console.log('✔️ Report table created successfully');
+        
 
         // Create guardians table
         await db.execute(`
