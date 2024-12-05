@@ -85,3 +85,18 @@ export const financeTable = pgTable('finance', {
     personalDocs: varchar('personal_docs', { length: 255 }), 
     password: varchar('password', { length: 255 }).notNull(),
 });
+
+export const studentTable = pgTable('student', {
+    id: serial('id').primaryKey(),
+    firstName: varchar('first_name', { length: 100 }).notNull(),
+    admissionNumber: varchar('admission_number', { length: 8}).notNull().unique(),
+    lastName: varchar('last_name', { length: 100 }).notNull(),
+    bloodGroup: bloodGroupEnum('blood_group').notNull(),
+    gender: genderEnum('gender').notNull(),
+    image: varchar('image', { length: 255 }),
+    admissionDate: date('admission_date').notNull(),
+    
+
+    
+
+})
