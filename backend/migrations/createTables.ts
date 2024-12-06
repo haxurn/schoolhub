@@ -98,6 +98,7 @@ const createTables = async () => {
                 languages_known TEXT NOT NULL,
                 date_of_birth DATE NOT NULL,
                 image VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
                 blood_group VARCHAR(5) NOT NULL,
                 CONSTRAINT unique_admission_number UNIQUE (admission_number)
             )
@@ -175,6 +176,7 @@ const createTables = async () => {
                 mother_phone VARCHAR(20) NOT NULL,
                 mother_occupation VARCHAR(255) NOT NULL,
                 mother_upload VARCHAR(255),
+                password VARCHAR(255) NOT NULL,
                 created_at TIMESTAMP DEFAULT NOW() NOT NULL,
                 updated_at TIMESTAMP DEFAULT NOW() NOT NULL
             )
@@ -217,20 +219,19 @@ const createTables = async () => {
         console.log('✔️ Teacher table created successfully');
 
         // Create library_manager table
-
         await db.execute(`
             CREATE TABLE IF NOT EXISTS library_manager (
-            id SERIAL PRIMARY KEY,
-            username VARCHAR(255) UNIQUE NOT NULL,
-            password VARCHAR(255) UNIQUE NOT NULL,
-            first_name VARCHAR(100) NOT NULL,
-            last_name VARCHAR(100) NOT NULL,
-            email_address VARCHAR(255) UNIQUE NOT NULL,
-            image VARCHAR(100) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-            )
-            `);
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(255) UNIQUE NOT NULL,
+                password VARCHAR(255) UNIQUE NOT NULL,
+                first_name VARCHAR(100) NOT NULL,
+                last_name VARCHAR(100) NOT NULL,
+                email_address VARCHAR(255) UNIQUE NOT NULL,
+                image VARCHAR(100) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+            );
+        `);
             console.log('✔️ Library Manager table created successfully');
 
             await db.execute(`
@@ -251,6 +252,41 @@ const createTables = async () => {
             `);
             console.log('✔️ Events table created successfully');
 
+            await db.execute(`
+                CREATE TABLE IF NOT EXISTS subject (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(100) NOT NULL, -- Name of the subject (e.g., Mathematics, Science)
+                    code VARCHAR(20) UNIQUE NOT NULL, -- Subject code (e.g., MATH101)
+                    description TEXT, -- Optional description for the subject
+                    created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+                    updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+                )
+            `);
+            console.log('✔️ Subject table created successfully');
+        
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS section (
+                id SERIAL PRIMARY KEY,
+                section_name VARCHAR(50) NOT NULL,
+                section_code VARCHAR(100) UNIQUE NOT NULL,
+                status VARCHAR(50) DEFAULT 'active' NOT NULL,
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+            )
+        `);
+        console.log('✔️ Section table created successfully');
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS section (
+                id SERIAL PRIMARY KEY,
+                section_name VARCHAR(50) NOT NULL,
+                section_code VARCHAR(100) UNIQUE NOT NULL,
+                status VARCHAR(50) DEFAULT 'active' NOT NULL,
+                created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+                updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+            )
+        `);
+        console.log('✔️ Section table created successfully');
+
         await db.execute(`
                 CREATE TABLE IF NOT EXISTS class (
                     id SERIAL PRIMARY KEY,
@@ -266,17 +302,6 @@ const createTables = async () => {
             `);
          console.log('✔️ Class table created successfully');
 
-         await db.execute(`
-            CREATE TABLE IF NOT EXISTS section (
-                id SERIAL PRIMARY KEY,
-                section_name VARCHAR(50) NOT NULL,
-                section_code VARCHAR(100) UNIQUE NOT NULL,
-                status VARCHAR(50) DEFAULT 'active' NOT NULL,
-                created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-                updated_at TIMESTAMP DEFAULT NOW() NOT NULL
-            )
-        `);
-        console.log('✔️ Section table created successfully');
 
         await db.execute(`
             CREATE TABLE IF NOT EXISTS class_routine (
@@ -295,17 +320,7 @@ const createTables = async () => {
         `);
         console.log('✔️ Class Routine table created successfully');
 
-        await db.execute(`
-            CREATE TABLE IF NOT EXISTS subject (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(100) NOT NULL, -- Name of the subject (e.g., Mathematics, Science)
-                code VARCHAR(20) UNIQUE NOT NULL, -- Subject code (e.g., MATH101)
-                description TEXT, -- Optional description for the subject
-                created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-                updated_at TIMESTAMP DEFAULT NOW() NOT NULL
-            )
-        `);
-        console.log('✔️ Subject table created successfully');
+        
 
         await db.execute(`
             CREATE TABLE IF NOT EXISTS timetable (
@@ -379,7 +394,7 @@ const createTables = async () => {
         await db.execute(`
             CREATE TABLE IF NOT EXISTS user_library_usage (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES "user"(id) ON DELETE CASCADE,  -- Foreign key to user table (student or teacher)
+                user_id INTEGER REFERENCES "users"(id) ON DELETE CASCADE,  -- Foreign key to user table (student or teacher)
                 library_id INTEGER REFERENCES library(id) ON DELETE CASCADE,  -- Foreign key to library table
                 borrow_date TIMESTAMP DEFAULT NOW() NOT NULL,  -- Date when the book was borrowed
                 return_date TIMESTAMP,  -- Date when the book was returned (nullable if not returned yet)
@@ -394,10 +409,10 @@ const createTables = async () => {
         await db.execute(`
             CREATE TABLE IF NOT EXISTS attendance (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES "user"(id) ON DELETE CASCADE,  -- Reference to the user (student/teacher)
+                user_id INTEGER REFERENCES "users"(id) ON DELETE CASCADE,  -- Reference to the user (student/teacher)
                 class_id INTEGER REFERENCES class(id) ON DELETE CASCADE,  -- Reference to the class the user is attending
                 attendance_date DATE NOT NULL,  -- The date of the class session
-                status VARCHAR(50) CHECK (status IN ('present', 'absent', 'excused', 'late')) DEFAULT 'absent' NOT NULL,  -- Status of attendance
+                status VARCHAR(50) CHECK (status IN ('present', 'absent', 'excused', 'late')) DEFAULT 'present' NOT NULL,  -- Status of attendance
                 comments TEXT,  -- Additional comments, e.g., reason for absence
                 created_at TIMESTAMP DEFAULT NOW() NOT NULL,  -- Record creation timestamp
                 updated_at TIMESTAMP DEFAULT NOW() NOT NULL  -- Last record update timestamp
@@ -408,7 +423,7 @@ const createTables = async () => {
         await db.execute(`
             CREATE TABLE IF NOT EXISTS report (
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER REFERENCES "user"(id) ON DELETE CASCADE,  -- Reference to the user (student or teacher) this report is for
+                user_id INTEGER REFERENCES "users"(id) ON DELETE CASCADE,  -- Reference to the user (student or teacher) this report is for
                 report_type VARCHAR(100) NOT NULL,  -- Type of report (e.g., "performance", "attendance", etc.)
                 content TEXT,  -- Content of the report (could be text or summary)
                 attachment VARCHAR(255),  -- Link to any attached file (e.g., PDF report)
