@@ -3,8 +3,7 @@
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
-
-import { sessionMiddleware } from '../middleware/sessionMiddleware'; 
+import { sessionMiddleware } from '../middleware/sessionMiddleware';
 
 const options: swaggerJSDoc.Options = {
     definition: {
@@ -12,7 +11,7 @@ const options: swaggerJSDoc.Options = {
         info: {
             title: 'SchoolHub API',
             version: '1.0.0',
-            description: 'SchoolHub API documentation',
+            description: 'SchoolHub API Documentation',
         },
         servers: [
             {
@@ -27,25 +26,47 @@ const options: swaggerJSDoc.Options = {
                     scheme: 'bearer',
                     bearerFormat: 'JWT',
                 },
-                
             },
+            schemas: {
+                Error: {
+                    type: 'object',
+                    properties: {
+                        message: {
+                            type: 'string',
+                            description: 'Error message'
+                        },
+                        errors: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    field: { type: 'string' },
+                                    message: { type: 'string' }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         },
         security: [
             {
-                bearerAuth: [],
-                csrfAuth: [],
-            },
-        ],
+                bearerAuth: []
+            }
+        ]
     },
-    apis: ['./routes/*.ts', './controllers/*.ts'],
+    apis: [
+        './routes/student/*.ts',
+        './routes/admin/*.ts',
+        './routes/finance/*.ts',
+        './routes/parent/*.ts',
+        './routes/index.ts'
+    ]
 };
 
-const swaggerSpec = swaggerJSDoc(options);
-
 const setupSwagger = (app: Express) => {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-    app.use(sessionMiddleware);
+    const swaggerSpec = swaggerJSDoc(options);
+    app.use('/api-docs', sessionMiddleware, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 };
 
 export default setupSwagger;
