@@ -9,15 +9,31 @@ import { db } from '../config/dbConfig';
 import { eq } from 'drizzle-orm';
 import fs from 'fs';
 import { MulterFile } from '../types/multerFile';
+import path from 'path';
+
+
+const UPLOAD_DIR = path.resolve(__dirname, '../uploads');
+
 const deleteUploadedFiles = (files: MulterFile[]) => {
     files.forEach(file => {
-        fs.unlink(file.path, (err) => {
+       
+        const safeFilePath = path.join(UPLOAD_DIR, path.basename(file.path));
+
+        
+        if (!safeFilePath.startsWith(UPLOAD_DIR)) {
+            console.error(`❌ Security Error: Invalid file path detected: ${file.path}`);
+            return;
+        }
+        fs.unlink(safeFilePath, (err) => {
             if (err) {
-                console.error(`❌ Error deleting file ${file.path}:`, err);
+                console.error(`❌ Error deleting file ${safeFilePath}:`, err);
+            } else {
+                console.log(`✅ File deleted successfully: ${safeFilePath}`);
             }
         });
     });
 };
+
 const parseDate = (date: string) => {
     return date && date.toLowerCase() !== 'null' ? date : null;
 };
@@ -47,7 +63,7 @@ export const registerFinanceRegistrar = async (req: Request, res: Response, next
             permanentAddress, panNumber, epfNumber, basicSalary, contractType, workShift, workLocation,
             dateOfLeaving, medicalLeaves, casualLeaves, maternityLeaves, sickLeaves, accountName,
             accountNumber, bankName, ifscCode, facebook, instagram, linkedin, youtube, twitterUrl,
-            password, confirmPassword
+            password, 
         } = req.body;
         const registrarId = generateIdFinance();
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -115,7 +131,7 @@ export const registerFinanceRegistrar = async (req: Request, res: Response, next
             await createFinanceEntry(newFinanceEntry);
             await trx.insert(usersTable).values(newUser).execute();
         });
-        // Generate JWT token for the new finance registrar
+       
         const financeToken = jwt.sign(
             { id: registrarId, username: emailAddress, role: 'finance' },
             process.env.JWT_SECRET as string,
