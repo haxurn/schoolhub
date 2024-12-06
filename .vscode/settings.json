@@ -25,5 +25,17 @@
     ],
     "conventionalCommits.scopes": [
         "add frontend "
+    ],
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "database": "schoolhub",
+            "username": "postgres",
+            "name": "School Hub"
+        }
     ]
 }
