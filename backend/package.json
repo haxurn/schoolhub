@@ -15,6 +15,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/express-rate-limit": "6.0.2",
+    "@types/lodash.escape": "^4.0.9",
+    "@types/yamljs": "^0.2.34",
     "bcrypt": "^5.1.1",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
@@ -22,14 +25,17 @@
     "csurf": "^1.2.2",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.36.4",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
     "express-session": "^1.18.1",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
+    "lodash.escape": "^4.0.1",
     "multer": "^1.4.5-lts.1",
     "pg": "^8.13.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
