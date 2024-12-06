@@ -6,44 +6,54 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import setupSwagger from './config/swaggerConfig';
 import { checkConnection } from './config/dbConfig';
-import authRoutes from './routes/authRoutes';
 import { sessionMiddleware } from './middleware/sessionMiddleware';
 import cors from 'cors';
+import path from 'path';
+import router from './routes';
 
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:3000', methods: ['GET', 'POST', 'PUT', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization'], }));
+
+// Middleware
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 app.use(cookieParser());
-
-
 app.use(sessionMiddleware);
-
-
 app.use(helmet());
-
-
 app.use(express.json());
 
 
+app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR || 'uploads')));
 
 setupSwagger(app);
 
+// Routes
 app.get('/', (req: Request, res: Response) => {
-  res.json({
-    message: '👋 Hello from SchoolHub! 🎓',
-  });
+    res.json({
+        message: '👋 Hello from SchoolHub! 🎓',
+    });
 });
 
+// API Routes
+app.use('/api/', router);
 
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error('❌ Error:', err);
+    res.status(500).json({
+        message: 'Internal server error',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+});
 
-
-app.use('/api/auth', authRoutes);
-
-
+// Start server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`🚀 SchoolHub backend is running on http://localhost:${port} 🖥️`);
-  checkConnection();
+    console.log(`🚀 SchoolHub backend is running on http://localhost:${port} 🖥️`);
+    checkConnection();
 });
