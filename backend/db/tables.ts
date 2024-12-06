@@ -394,3 +394,18 @@ export const examinationTable = pgTable('examination', {
     createdAt: timestamp('created_at').defaultNow().notNull(), 
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
+
+export const studentTable = pgTable('student', {
+    id: serial('id').primaryKey(),
+    firstName: varchar('first_name', { length: 100 }).notNull(),
+    admissionNumber: varchar('admission_number', { length: 8}).notNull().unique(),
+    lastName: varchar('last_name', { length: 100 }).notNull(),
+    bloodGroup: bloodGroupEnum('blood_group').notNull(),
+    gender: genderEnum('gender').notNull(),
+    image: varchar('image', { length: 255 }),
+    admissionDate: date('admission_date').notNull(),
+    
+
+    
+
+})
