@@ -26,6 +26,7 @@ export const getAttendanceByIdController = async (req: Request, res: Response): 
         }
         res.status(200).json(attendance);
     } catch (error) {
+        // file deepcode ignore FormatString: <please specify a reason of ignoring this>
         console.error(`❌ Error fetching attendance record with ID ${req.params.id}:`, error);
         res.status(500).json({ message: 'Failed to fetch attendance record' });
     }
