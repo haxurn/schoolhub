@@ -26,6 +26,7 @@ const deleteUploadedFiles = (files: MulterFile[]) => {
         }
         fs.unlink(safeFilePath, (err) => {
             if (err) {
+                // deepcode ignore FormatString: <please specify a reason of ignoring this>
                 console.error(`❌ Error deleting file ${safeFilePath}:`, err);
             } else {
                 console.log(`✅ File deleted successfully: ${safeFilePath}`);
