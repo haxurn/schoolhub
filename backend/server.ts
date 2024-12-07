@@ -32,17 +32,17 @@ app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR |
 
 setupSwagger(app);
 
-// Routes
+
 app.get('/', (req: Request, res: Response) => {
     res.json({
         message: '👋 Hello from SchoolHub! 🎓',
     });
 });
 
-// API Routes
+
 app.use('/api/', router);
 
-// Error handling middleware
+
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error('❌ Error:', err);
     res.status(500).json({
@@ -51,7 +51,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     });
 });
 
-// Start server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`🚀 SchoolHub backend is running on http://localhost:${port} 🖥️`);
