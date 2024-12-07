@@ -110,18 +110,18 @@ export const studentTable = pgTable('student', {
     class: classEnum('class').notNull(),
     section: varchar('section', { length: 50}),
     gender: genderEnum('gender').notNull(),
+    bloodGroup: bloodGroupEnum('blood_group').notNull(),
     religionStatus: religionStatusEnum('religion_status').notNull(),
-    emailAddress: varchar('email_address', { length: 255 }),
+    emailAddress: varchar('email_address', { length: 255 }).notNull(),
     motherTongue: varchar('mother_tongue', { length: 255 }).notNull(),
     languagesKnown: text('languages_known').notNull(),
     dateOfBirth: date('date_of_birth').notNull(),
-    image: varchar('image', { length: 255 }).notNull(),
+    image: varchar('image', { length: 255 }),
     password: varchar('password', { length: 255 }).notNull(),
-    bloodGroup: bloodGroupEnum('blood_group').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
     
-})
+});
 
 export const documentTable = pgTable('document', {
     id: serial('id').primaryKey(),
@@ -258,7 +258,6 @@ export const reportTable = pgTable('report', {
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
 
-
 export const subjectTable = pgTable('subject', {
     id: serial('id').primaryKey(), 
     name: varchar('name', { length: 100 }).notNull(), 
@@ -267,8 +266,6 @@ export const subjectTable = pgTable('subject', {
     createdAt: timestamp('created_at').defaultNow().notNull(), 
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
-
-
 
 export const libraryTable = pgTable('library', {
     id: serial('id').primaryKey(),
@@ -285,7 +282,6 @@ export const libraryTable = pgTable('library', {
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
 
-
 export const userLibraryUsageTable = pgTable('user_library_usage', {
     id: serial('id').primaryKey(), 
     userId: integer('user_id').references(() => usersTable.id).notNull(), 
@@ -296,8 +292,6 @@ export const userLibraryUsageTable = pgTable('user_library_usage', {
     createdAt: timestamp('created_at').defaultNow().notNull(), 
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
-
-
 
 export const sectionTable = pgTable('section', {
     id: serial('id').primaryKey(), 
@@ -320,7 +314,6 @@ export const classTable = pgTable('class', {
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-
 export const classRoutineTable = pgTable('class_routine', {
     id: serial('id').primaryKey(), 
     classId: integer('class_id').references(() => classTable.id),
@@ -335,8 +328,6 @@ export const classRoutineTable = pgTable('class_routine', {
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
 
-
-
 export const timetableTable = pgTable('timetable', {
     id: serial('id').primaryKey(),
     classId: integer('class_id').references(() => classTable.id).notNull(), 
@@ -349,8 +340,6 @@ export const timetableTable = pgTable('timetable', {
     createdAt: timestamp('created_at').defaultNow().notNull(), 
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
-
-
 
 export const homeworkTable = pgTable('homework', {
     id: serial('id').primaryKey(),
@@ -366,7 +355,6 @@ export const homeworkTable = pgTable('homework', {
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
 
-
 export const attendanceTable = pgTable('attendance', {
     id: serial('id').primaryKey(), 
     userId: integer('user_id').references(() => usersTable.id).notNull(), 
@@ -377,8 +365,6 @@ export const attendanceTable = pgTable('attendance', {
     createdAt: timestamp('created_at').defaultNow().notNull(), 
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
-
-
 
 export const examinationTable = pgTable('examination', {
     id: serial('id').primaryKey(), 
@@ -394,18 +380,3 @@ export const examinationTable = pgTable('examination', {
     createdAt: timestamp('created_at').defaultNow().notNull(), 
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });
-
-export const studentTable = pgTable('student', {
-    id: serial('id').primaryKey(),
-    firstName: varchar('first_name', { length: 100 }).notNull(),
-    admissionNumber: varchar('admission_number', { length: 8}).notNull().unique(),
-    lastName: varchar('last_name', { length: 100 }).notNull(),
-    bloodGroup: bloodGroupEnum('blood_group').notNull(),
-    gender: genderEnum('gender').notNull(),
-    image: varchar('image', { length: 255 }),
-    admissionDate: date('admission_date').notNull(),
-    
-
-    
-
-})
