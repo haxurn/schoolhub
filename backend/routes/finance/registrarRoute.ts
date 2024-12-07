@@ -167,7 +167,7 @@ const registerHandler: RequestHandler = async (req, res, next) => {
 
 /**
  * @swagger
- * /api/finance/register:
+ * /finance/register:
  *   post:
  *     summary: Register new finance staff
  *     tags: [Finance Staff Management]
