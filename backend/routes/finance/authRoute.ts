@@ -135,7 +135,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/finance/login:
+ * /finance/login:
  *   post:
  *     summary: Authenticate finance staff
  *     tags: [Finance Staff Management]
