@@ -22,46 +22,64 @@ export interface Parent {
     updatedAt: Date | null;
 }
 
-export interface ParentWithChildren extends Parent {
-    children: Array<{
-        id: number;
-        firstName: string;
-        lastName: string;
-        admissionNumber: string;
-        class: string;
-        section: string | null;
-    }>;
+export interface Child {
+    id: number;
+    firstName: string;
+    lastName: string;
+    admissionNumber: string;
+    class: string;
+    section: string | null;
 }
 
+export interface ParentWithChildren extends Parent {
+    children: Child[];
+}
+
+/**
+ * Fetches a parent record by email, matching either father's or mother's email.
+ * 
+ * @param email - The parent's email (father's or mother's)
+ * @returns The parent record or null if not found
+ */
 export const getParentByEmail = async (email: string): Promise<Parent | null> => {
     try {
-        const parent = await db
+        const [parent] = await db
             .select()
             .from(parentsTable)
-            .where(or(
-                eq(parentsTable.fatherEmail, email),
-                eq(parentsTable.motherEmail, email)
-            ));
+            .where(
+                or(
+                    eq(parentsTable.fatherEmail, email),
+                    eq(parentsTable.motherEmail, email)
+                )
+            );
 
-        return parent.length > 0 ? parent[0] : null;
+        return parent || null;
     } catch (error) {
         console.error('Error in getParentByEmail:', error);
         throw error;
     }
 };
 
+/**
+ * Fetches a parent record along with their children.
+ * 
+ * @param parentId - The ID of the parent
+ * @returns The parent with children or null if not found
+ */
 export const getParentWithChildren = async (parentId: number): Promise<ParentWithChildren | null> => {
     try {
-        const parent = await db
+        // Fetch the parent record
+        const [parent] = await db
             .select()
             .from(parentsTable)
             .where(eq(parentsTable.id, parentId))
             .limit(1);
 
-        if (!parent || parent.length === 0) {
+        if (!parent) {
             return null;
         }
 
+        // Fetch the children records associated with the parent
         const children = await db
             .select({
                 id: studentTable.id,
@@ -72,10 +90,10 @@ export const getParentWithChildren = async (parentId: number): Promise<ParentWit
                 section: studentTable.section,
             })
             .from(studentTable)
-            .where(eq(parentsTable.studentId, studentTable.id));
+            .where(eq(studentTable.id, parent.studentId)); 
 
         return {
-            ...parent[0],
+            ...parent,
             children,
         };
     } catch (error) {

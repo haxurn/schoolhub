@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Parent
- *   description: Parent login and session management
+ *   description: 
  * 
  * components:
  *   schemas:

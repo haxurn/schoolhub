@@ -21,7 +21,7 @@ interface Homework {
 export const createHomework = async (homeworkData: Omit<Homework, 'id' | 'createdAt' | 'updatedAt'>) => {
     const sanitizedHomeworkData = {
         ...homeworkData,
-        teacherId: homeworkData.teacherId ?? null, // Handle optional teacherId
+        teacherId: homeworkData.teacherId ?? null, 
     };
 
     await db.insert(homeworkTable).values(sanitizedHomeworkData as any).execute();

@@ -1,6 +1,6 @@
 // backend/config/tables.ts
 
-import { pgTable, serial, text, varchar, integer, date, pgEnum, timestamp, time } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, varchar, integer, date, pgEnum, timestamp, time, numeric, boolean } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm/sql';
 import createRoleEnum from '../enums/roleEnum';
 import createBloodGroupEnum from '../enums/bloodGroupEnum';
@@ -31,9 +31,8 @@ const medicalConditionEnum = pgEnum('medical_condition', ['Good', 'Bad', 'Others
 const siblingEnum = pgEnum('sibling', ['Yes', 'No']);
 const guardianTypeEnum = pgEnum('guardian_type', ['Parents', 'Guardian', 'Others']);
 
-
-
-
+const libraryUserRoleEnum = pgEnum('library_user_role', ['student', 'staff', 'admin']);
+const libraryUserStatusEnum = pgEnum('library_user_status', ['active', 'inactive']);
 
 export const rolesTable = pgTable('roles', {
     id: serial('id').primaryKey(),
@@ -44,10 +43,17 @@ export const usersTable = pgTable('users', {
     id: serial('id').primaryKey(),
     username: varchar('username', { length: 100 }).notNull().unique(),
     password: varchar('password', { length: 255 }).notNull(),
+    first_name: varchar('first_name', { length: 100 }).notNull(),
+    last_name: varchar('last_name', { length: 100 }).notNull(),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    created_at: timestamp('created_at').defaultNow().notNull(),
+    updated_at: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
+    image: varchar('image', { length: 255 }).notNull(),
     role_id: integer('role_id').references(() => rolesTable.id).notNull(),
+    resetPasswordToken: varchar('reset_password_token', { length: 255 }),
+    resetPasswordExpires: timestamp('reset_password_expires'),
+    isActive: boolean('is_active').default(true),
 });
-
-
 
 export const financeTable = pgTable('finance', {
     id: serial('id').primaryKey(),
@@ -98,6 +104,9 @@ export const financeTable = pgTable('finance', {
     password: varchar('password', { length: 255 }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`), 
+    resetPasswordToken: varchar('reset_password_token', { length: 255 }),
+    resetPasswordExpires: timestamp('reset_password_expires'),
+    isActive: boolean('is_active').default(true),
 });
 
 export const studentTable = pgTable('student', {
@@ -120,7 +129,9 @@ export const studentTable = pgTable('student', {
     password: varchar('password', { length: 255 }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
-    
+    resetPasswordToken: varchar('reset_password_token', { length: 255 }),
+    resetPasswordExpires: timestamp('reset_password_expires'),
+    isActive: boolean('is_active').default(true),
 });
 
 export const documentTable = pgTable('document', {
@@ -181,6 +192,9 @@ export const parentsTable = pgTable('parents', {
     password: varchar('password', { length: 255 }).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
+    resetPasswordToken: varchar('reset_password_token', { length: 255 }),
+    resetPasswordExpires: timestamp('reset_password_expires'),
+    isActive: boolean('is_active').default(true),
 });
 
 export const guardiansTable = pgTable('guardians', {
@@ -199,12 +213,14 @@ export const guardiansTable = pgTable('guardians', {
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
+    resetPasswordToken: varchar('reset_password_token', { length: 255 }),
+    resetPasswordExpires: timestamp('reset_password_expires'),
+    isActive: boolean('is_active').default(true),
 });
-
-
 
 export const teacherTable = pgTable('teacher', {
     id: serial('id').primaryKey(),
+    username: varchar('username', { length: 255 }).notNull().unique(),
     firstName: varchar('first_name', { length: 100 }).notNull(),
     lastName: varchar('last_name', { length: 100 }).notNull(),
     emailAddress: varchar('email_address', { length: 255 }).notNull().unique(),
@@ -233,6 +249,9 @@ export const teacherTable = pgTable('teacher', {
     createdAt: timestamp('created_at').defaultNow().notNull(),
     password: varchar('password', { length: 255 }).notNull(),
     updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
+    resetPasswordToken: varchar('reset_password_token', { length: 255 }),
+    resetPasswordExpires: timestamp('reset_password_expires'),
+    isActive: boolean('is_active').default(true),
 });
 
 export const libraryManagerTable = pgTable('library', {
@@ -240,14 +259,46 @@ export const libraryManagerTable = pgTable('library', {
     username: varchar('username', { length: 255 }).unique().notNull(),
     password: varchar('password', { length: 255 }).notNull(),
     firstName: varchar('first_name', { length: 100 }).notNull(),
+    image: varchar('image', { length: 255 }).notNull(),
     lastName: varchar('last_name', { length: 100 }).notNull(),
     email: varchar('email', { length: 255 }).unique().notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
-    image: varchar('image', { length: 255 }).notNull(),
     updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
+    resetPasswordToken: varchar('reset_password_token', { length: 255 }),
+    resetPasswordExpires: timestamp('reset_password_expires'),
+    isActive: boolean('is_active').default(true),
 });
 
 
+
+export const libraryTable = pgTable('library', {
+    id: serial('id').primaryKey(),
+    bookTitle: varchar('book_title', { length: 255 }).notNull(),
+    author: varchar('author', { length: 255 }).notNull(),
+    isbn: varchar('isbn', { length: 50 }).unique(),
+    image: varchar('image', { length: 255 }).notNull(),
+    category: varchar('category', { length: 100 }).notNull(),
+    totalCopies: integer('total_copies').notNull(),
+    availableCopies: integer('available_copies').notNull(),
+    publicationYear: integer('publication_year'),
+    publisher: varchar('publisher', { length: 255 }),
+    language: varchar('language', { length: 100 }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
+});
+
+export const userLibraryUsageTable = pgTable('user_library_usage', {
+    id: serial('id').primaryKey(), 
+    userId: integer('user_id').references(() => libraryTable.id).notNull(), 
+    libraryId: integer('library_id').references(() => libraryTable.id).notNull(), 
+    borrowDate: timestamp('borrow_date').defaultNow().notNull(),
+    dueDate: timestamp('due_date').notNull(),
+    returnDate: timestamp('return_date'),
+    status: varchar('status', { length: 50 }).default('borrowed').notNull(),
+    fine: numeric('fine', { precision: 10, scale: 2 }).default('0').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().$onUpdateFn(() => sql`CURRENT_TIMESTAMP`),
+});
 
 export const reportTable = pgTable('report', {
     id: serial('id').primaryKey(), 
@@ -263,32 +314,6 @@ export const subjectTable = pgTable('subject', {
     name: varchar('name', { length: 100 }).notNull(), 
     code: varchar('code', { length: 20 }).unique().notNull(), 
     description: text('description'),
-    createdAt: timestamp('created_at').defaultNow().notNull(), 
-    updatedAt: timestamp('updated_at').defaultNow().notNull(), 
-});
-
-export const libraryTable = pgTable('library', {
-    id: serial('id').primaryKey(),
-    title: varchar('title', { length: 255 }).notNull(), 
-    author: varchar('author', { length: 255 }).notNull(), 
-    isbn: varchar('isbn', { length: 20 }).unique().notNull(),
-    category: varchar('category', { length: 100 }).notNull(), 
-    totalCopies: integer('total_copies').notNull(), 
-    availableCopies: integer('available_copies').notNull(), 
-    publishedDate: date('published_date'), 
-    shelfLocation: varchar('shelf_location', { length: 50 }).notNull(), 
-    subjectId: integer('subject_id').references(() => subjectTable.id).notNull(), 
-    createdAt: timestamp('created_at').defaultNow().notNull(), 
-    updatedAt: timestamp('updated_at').defaultNow().notNull(), 
-});
-
-export const userLibraryUsageTable = pgTable('user_library_usage', {
-    id: serial('id').primaryKey(), 
-    userId: integer('user_id').references(() => usersTable.id).notNull(), 
-    libraryId: integer('library_id').references(() => libraryTable.id).notNull(), 
-    borrowDate: timestamp('borrow_date').defaultNow().notNull(), 
-    returnDate: timestamp('return_date'), // Define 'return_date'
-    status: varchar('status', { length: 50 }).default('borrowed').notNull(), 
     createdAt: timestamp('created_at').defaultNow().notNull(), 
     updatedAt: timestamp('updated_at').defaultNow().notNull(), 
 });

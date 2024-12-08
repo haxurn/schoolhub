@@ -9,14 +9,32 @@ interface UserLibraryUsage {
     userId: number;
     libraryId: number;
     borrowDate: Date;
+    dueDate: Date;
     returnDate?: Date;
     status: string;
+    fine?: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
 export const createUserLibraryUsage = async (usageData: Omit<UserLibraryUsage, 'id' | 'createdAt' | 'updatedAt'>) => {
-    await db.insert(userLibraryUsageTable).values(usageData).execute();
+    // Ensure all required fields are present
+    const completeUsageData = {
+        ...usageData,
+        borrowDate: usageData.borrowDate || new Date(),
+        dueDate: usageData.dueDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
+        status: usageData.status || 'active',
+        fine: usageData.fine || '0',
+        createdAt: new Date(),
+        updatedAt: new Date()
+    };
+
+    const result = await db
+        .insert(userLibraryUsageTable)
+        .values(completeUsageData)
+        .returning();
+
+    return result[0] as UserLibraryUsage;
 };
 
 export const getUserLibraryUsageById = async (id: number): Promise<UserLibraryUsage | null> => {

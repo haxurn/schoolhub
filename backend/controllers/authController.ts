@@ -1,12 +1,14 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { getAdminByUsername, comparePassword as adminComparePassword } from '../models/adminModel';
 import { getFinanceRegistrarByUsername } from '../models/financeRegistrarModel';
 import { getParentByEmail, getParentWithChildren } from '../models/parentModel';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { libraryUserLoginSchema } from '../validators/libraryValidators';
 import { rateLimit } from 'express-rate-limit';
 import { createLogger } from '../utils/logger';
 import bcrypt from 'bcrypt';
+import { loginLibraryManager } from '../models/libraryModel';
 
 const logger = createLogger('authController');
 
@@ -23,8 +25,9 @@ const parentLoginSchema = z.object({
 
 interface TokenPayload {
     id: string;
-    username: string;
-    role: 'admin' | 'finance' | 'parent';
+    username?: string;
+    email?: string;
+    role: 'admin' | 'finance' | 'parent' | 'library';
     iat?: number;
     exp?: number;
 }
@@ -275,6 +278,55 @@ export const loginParent = async (req: Request, res: Response): Promise<void> =>
                     section: child.section,
                     admissionNumber: child.admissionNumber
                 })),
+                lastLogin: new Date().toISOString()
+            }
+        });
+        
+    } catch (error) {
+        handleAuthError(res, error);
+    }
+};
+
+/**
+ * Library user login handler
+ */
+export const loginLibraryUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // Validate input
+        const validatedData = libraryUserLoginSchema.parse(req.body);
+        const { username, password } = validatedData;
+
+        // Attempt library user login
+        const loginResult = await loginLibraryManager(username, password);
+        
+        if (!loginResult) {
+            logger.warn(`Failed login attempt for library user: ${username}`);
+            res.status(401).json({
+                message: 'Invalid credentials',
+                error: 'Email or password is incorrect'
+            });
+            return;
+        }
+
+        // Generate token
+        const token = generateToken({
+            id: loginResult.user.id.toString(),
+            email: loginResult.user.email,
+            role: 'library'
+        });
+
+        logger.info(`Successful library user login: ${username}`);
+        
+        // Send response with token and user info
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: {
+                id: loginResult.user.id.toString(),
+                username: loginResult.user.username,
+                email: loginResult.user.email,
+                firstName: loginResult.user.firstName,
+                lastName: loginResult.user.lastName,
                 lastLogin: new Date().toISOString()
             }
         });

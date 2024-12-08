@@ -1,3 +1,4 @@
+import { Teacher } from './../models/teacherModel';
 // backend/utils/generateId.ts
 
 export const generateIdFinance = (): string => {
@@ -9,6 +10,13 @@ export const generateIdFinance = (): string => {
 
 export const admissionNumberGenerator = (): string => {
     const prefix = 'STD';
+    const timestamp = Date.now().toString().slice(-4);
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `${prefix}${timestamp}${random}`;
+};
+
+export const teacherIdGenerator = (): string => {
+    const prefix = 'T';
     const timestamp = Date.now().toString().slice(-4);
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
     return `${prefix}${timestamp}${random}`;

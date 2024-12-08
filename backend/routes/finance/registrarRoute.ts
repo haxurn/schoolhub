@@ -19,8 +19,8 @@ const registerHandler: RequestHandler = async (req, res, next) => {
 /**
  * @swagger
  * tags:
- *   name: Finance Staff Management
- *   description: Finance staff registration and management endpoints
+ *   name: Finance 
+ *   description: 
  * 
  * components:
  *   schemas:
@@ -270,7 +270,7 @@ const registerHandler: RequestHandler = async (req, res, next) => {
  * /finance/register:
  *   post:
  *     summary: Register new finance staff
- *     tags: [Finance Staff Management]
+ *     tags: [Finance]
  *     security:
  *       - bearerAuth: []
  *     description: |

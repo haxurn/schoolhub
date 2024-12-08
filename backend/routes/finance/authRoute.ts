@@ -8,8 +8,8 @@ const router = express.Router();
 /**
  * @swagger
  * tags:
- *   name: Finance Staff Management
- *   description: Finance staff authentication and registration endpoints
+ *   name: Finance 
+ *   description: 
  */
 
 /**
@@ -138,7 +138,7 @@ const router = express.Router();
  * /finance/login:
  *   post:
  *     summary: Authenticate finance staff
- *     tags: [Finance Staff Management]
+ *     tags: [Finance]
  *     requestBody:
  *       required: true
  *       content:

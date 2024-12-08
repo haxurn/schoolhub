@@ -82,7 +82,7 @@ export const registerFinanceRegistrar = async (req: Request, res: Response, next
             primaryContactNumber,
             emailAddress,
             bloodGroup,
-            image: files.image?.[0]?.path,
+            Image: files.image?.[0]?.path,
             dateOfJoining,
             gender: req.body.gender,
             fathersName,
@@ -120,12 +120,15 @@ export const registerFinanceRegistrar = async (req: Request, res: Response, next
             resume: files.resume?.[0]?.path,
             joiningLetter: files.joiningLetter?.[0]?.path,
             personalDocs: files.personalDocs?.[0]?.path,
-            password: hashedPassword,
             role_id: roleId,
         };
         const newUser = {
             username: registrarId,
             password: hashedPassword,
+            first_name: firstName,
+            last_name: lastName,
+            email: emailAddress,
+            image: files.image?.[0]?.path,
             role_id: roleId,
         };
         await db.transaction(async trx => {

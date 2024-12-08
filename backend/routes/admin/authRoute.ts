@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Admin
- *   description: Admin authentication endpoints for SchoolHub system
+ *   description: 
  */
 
 /**

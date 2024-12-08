@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Student
- *   description: Student login and session management
+ *   description: 
  * 
  * components:
  *   schemas:
