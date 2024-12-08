@@ -1,18 +1,15 @@
 // backend/routes/student/registerRoutes.ts
 
-
-
 import express from 'express';
 import { registerStudent } from '../../controllers/studentController';
 import { upload } from '../../middleware/uploadMiddleware';
 import { adminOrFinance } from '../../middleware/authMiddleware';
 
-
 const router = express.Router();
 
 /**
  * @swagger
- * /students/register:
+ * /student/register:
  *   post:
  *     tags: [Student]
  *     summary: Register a new student
