@@ -13,6 +13,9 @@ const financeRegistrarSchema = z.object({
         dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)'),
         fathersName: z.string().min(2, 'Father\'s name must be at least 2 characters'),
         mothersName: z.string().min(2, 'Mother\'s name must be at least 2 characters'),
+        bloodGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
+            errorMap: () => ({ message: 'Invalid blood group' })
+        }),
         maritalStatus: z.enum(['Single', 'Married', 'Divorced', 'Widowed'], {
             errorMap: () => ({ message: 'Invalid marital status' })
         })
@@ -71,66 +74,63 @@ type FinanceRegistrarData = z.infer<typeof financeRegistrarSchema>;
 
 export const validateFinanceRegistrarData: RequestHandler = (req, res, next) => {
     try {
-        // Restructure the flat request body into nested objects
-        const structuredData = {
-            personalInfo: {
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                primaryContactNumber: req.body.primaryContactNumber,
-                emailAddress: req.body.emailAddress,
-                dateOfBirth: req.body.dateOfBirth,
-                fathersName: req.body.fathersName,
-                mothersName: req.body.mothersName,
-                maritalStatus: req.body.maritalStatus
-            },
-            professionalInfo: {
-                qualification: req.body.qualification,
-                workExperience: Number(req.body.workExperience),
-                dateOfJoining: req.body.dateOfJoining,
-                contractType: req.body.contractType,
-                workShift: req.body.workShift,
-                workLocation: req.body.workLocation
-            },
-            addressInfo: {
-                address: req.body.address,
-                permanentAddress: req.body.permanentAddress
-            },
-            employmentInfo: {
-                panNumber: req.body.panNumber,
-                epfNumber: req.body.epfNumber,
-                basicSalary: Number(req.body.basicSalary),
-                medicalLeaves: Number(req.body.medicalLeaves),
-                casualLeaves: Number(req.body.casualLeaves),
-                maternityLeaves: Number(req.body.maternityLeaves),
-                sickLeaves: Number(req.body.sickLeaves)
-            },
-            bankInfo: {
-                accountName: req.body.accountName,
-                accountNumber: req.body.accountNumber,
-                bankName: req.body.bankName,
-                ifscCode: req.body.ifscCode
-            },
-            authentication: {
-                password: req.body.password,
-                confirmPassword: req.body.confirmPassword
-            }
+        // Parse the JSON strings from form data
+        const personalInfo = typeof req.body.personalInfo === 'string' ? JSON.parse(req.body.personalInfo) : req.body.personalInfo;
+        const professionalInfo = typeof req.body.professionalInfo === 'string' ? JSON.parse(req.body.professionalInfo) : req.body.professionalInfo;
+        const addressInfo = typeof req.body.addressInfo === 'string' ? JSON.parse(req.body.addressInfo) : req.body.addressInfo;
+        const employmentInfo = typeof req.body.employmentInfo === 'string' ? JSON.parse(req.body.employmentInfo) : req.body.employmentInfo;
+        const bankInfo = typeof req.body.bankInfo === 'string' ? JSON.parse(req.body.bankInfo) : req.body.bankInfo;
+        const authentication = typeof req.body.authentication === 'string' ? JSON.parse(req.body.authentication) : req.body.authentication;
+
+        // Convert string numbers to actual numbers
+        if (professionalInfo) {
+            professionalInfo.workExperience = Number(professionalInfo.workExperience);
+        }
+        if (employmentInfo) {
+            employmentInfo.basicSalary = Number(employmentInfo.basicSalary);
+            employmentInfo.medicalLeaves = Number(employmentInfo.medicalLeaves);
+            employmentInfo.casualLeaves = Number(employmentInfo.casualLeaves);
+            employmentInfo.maternityLeaves = Number(employmentInfo.maternityLeaves);
+            employmentInfo.sickLeaves = Number(employmentInfo.sickLeaves);
+        }
+
+        const data = {
+            personalInfo,
+            professionalInfo,
+            addressInfo,
+            employmentInfo,
+            bankInfo,
+            authentication
         };
 
-        const validatedData = financeRegistrarSchema.parse(structuredData);
-        req.body.validatedData = validatedData;
+        // Validate the structured data
+        financeRegistrarSchema.parse(data);
+
+        // Store the parsed data back in req.body
+        req.body = {
+            ...req.body,
+            ...personalInfo,
+            ...professionalInfo,
+            ...addressInfo,
+            ...employmentInfo,
+            ...bankInfo,
+            password: authentication?.password,
+            confirmPassword: authentication?.confirmPassword
+        };
+
         next();
     } catch (error) {
         if (error instanceof z.ZodError) {
-            res.status(400).json({
-                message: 'Validation failed',
-                errors: error.errors.map(err => ({
-                    field: err.path.join('.'),
-                    message: err.message
-                }))
+            const errors = error.errors.map(err => ({
+                field: err.path.join('.'),
+                message: err.message
+            }));
+            res.status(400).json({ message: 'Validation failed', errors });
+        } else {
+            res.status(400).json({ 
+                message: 'Invalid request data', 
+                error: error instanceof Error ? error.message : 'Unknown error' 
             });
-            return;
         }
-        res.status(500).json({ message: 'Internal server error during validation' });
-        return;
     }
 };
