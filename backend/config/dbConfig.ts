@@ -1,23 +1,20 @@
 // backend/config/dbConfig.ts
 
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-});
-export const db = drizzle(pool);
+const prisma = new PrismaClient();
 
 export const checkConnection = async () => {
     try {
-        await pool.connect();
+        // Prisma doesn't require explicit pool connection, just use `prisma.$connect()` to test connection
+        await prisma.$connect();
         console.log('📦 Database connection successful!');
-    } catch (error) { 
+    } catch (error) {
         console.error("❌ Database connection failed", error);
     }
 };
 
-
+export { prisma };
