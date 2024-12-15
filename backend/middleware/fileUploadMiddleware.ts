@@ -1,5 +1,3 @@
-    // backend/middleware/fileUploadMiddleware.ts
-
     import path from 'path';
     import multer, { FileFilterCallback } from 'multer';
     import { Request } from 'express';
