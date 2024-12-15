@@ -2,6 +2,7 @@
 
 import csrf from 'csurf';
 
+// TODO: Enable Csrf
 export const csrfProtection = csrf({
     cookie: {
         httpOnly: true,
@@ -9,4 +10,5 @@ export const csrfProtection = csrf({
         sameSite: 'lax',
     },
 });
+
 
