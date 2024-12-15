@@ -6,10 +6,9 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import setupSwagger from './config/swaggerConfig';
 import { checkConnection } from './config/dbConfig';
-import { sessionMiddleware } from './middleware/sessionMiddleware';
+import { sessionMiddleware } from './middleware/session.middleware';
 import cors from 'cors';
-import path from 'path';
-import { csrfProtection } from './middleware/csrfMiddleware';
+import { csrfProtection } from './middleware/csrf.middleware';
 
 dotenv.config();
 
@@ -28,8 +27,6 @@ app.use(csrfProtection)  // TODO: Enable Csrf
 app.use(helmet());
 app.use(express.json());
 
-
-app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR || 'uploads')));
 
 setupSwagger(app);
 
