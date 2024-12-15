@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// TODO: Set secure to true in production
 export const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET as string,
     resave: false,
