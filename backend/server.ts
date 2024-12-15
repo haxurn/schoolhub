@@ -9,14 +9,13 @@ import { checkConnection } from './config/dbConfig';
 import { sessionMiddleware } from './middleware/sessionMiddleware';
 import cors from 'cors';
 import path from 'path';
-import router from './routes';
+import { csrfProtection } from './middleware/csrfMiddleware';
 
 dotenv.config();
 
-// deepcode ignore UseCsurfForExpress: <please specify a reason of ignoring this>
+
 const app = express();
 
-// Middleware
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -25,6 +24,7 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(sessionMiddleware);
+app.use(csrfProtection)  // TODO: Enable Csrf
 app.use(helmet());
 app.use(express.json());
 
@@ -40,8 +40,13 @@ app.get('/', (req: Request, res: Response) => {
     });
 });
 
+app.get('/token', (req: Request, res: Response) => {
+    res.json({
+        csrfToken: req.csrfToken()
+    })
+})
 
-app.use('/api/', router);
+
 
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
