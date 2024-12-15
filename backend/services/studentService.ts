@@ -28,7 +28,7 @@ interface Student {
 interface Document {
     title: string;
     type: string;
-    fileUrl: string; // Corrected to match your model field name
+    fileUrl: string; 
     uploadedBy: string;
     studentId: string;
 }
@@ -40,7 +40,7 @@ export const createStudent = async (student: Student, documents: Document[]) => 
                 ...student,
                 bloodGroup: bloodGroupToPrisma[student.bloodGroup],
                 documents: {
-                    create: documents, // Passing an array of documents
+                    create: documents, 
                 }
             },
         });
