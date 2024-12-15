@@ -382,8 +382,8 @@ model Student {
   academicYear    String
   
   // Relations
-  guardian        Guardian        @relation(fields: [guardianId], references: [id])
-  guardianId      String
+  guardian        Guardian?        @relation(fields: [guardianId], references: [id])
+  guardianId      String?
   user            User            @relation("Student", fields: [userId], references: [id], map: "document_user_fkey")
   parent          Parent          @relation("ParentStudent", fields: [userId], references: [id], map: "parent_student_fkey")
   previousSchools PreviousSchool[] @relation("StudentPreviousSchools")
