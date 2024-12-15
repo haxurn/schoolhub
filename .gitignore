@@ -109,3 +109,9 @@ swagger-static/
 # JWT
 *.key
 *.key.pub
+
+# Prisma
+migrations/
+
+
+#904698375817
