@@ -7,8 +7,9 @@ Welcome to the backend of the SchoolHub project! SchoolHub is a platform that pr
 - **User Authentication:** Secure login and registration with JWT tokens.
 - **Role-based Access Control:** Different roles (e.g., student, teacher, admin, parent) with access to specific features.
 - **School Data Management:** Manage students, courses, grades, and schedules.
-- **Finance Management:** Accessible by the registrar for managing financial information.
-- **Dynamic Theming:** Support for light and dark mode.
+- **Communication:** Messaging between teachers and students.
+- **Parent Communication:** Messaging between parents and their children.
+- **Admin Dashboard:** Accessible by the admin for managing user roles and permissions.
 
 ## Tech Stack
 
