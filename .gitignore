@@ -61,7 +61,7 @@ coverage/
 debug.log
 debug/
 
-# Optional npm cache directory
+
 .npm
 
 # Optional eslint cache
@@ -112,5 +112,3 @@ swagger-static/
 
 # Prisma
 migrations/
-
-package-lock.json
