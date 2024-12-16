@@ -109,12 +109,13 @@ enum ClassMarkType {
 }
 
 enum ExamStatus {
-  Pass
-  Fail 
+  Passed
+  Failed 
+  Incomplete
   Absent
 }
 
-model User {
+model Users {
   id                 String        @id @default(cuid())
   username           String        @unique
   password           String
@@ -195,6 +196,8 @@ model Subject {
   teacher   Teacher        @relation(fields: [teacherId], references: [id])
   classId   String
   class     ClassSection   @relation("SubjectClass", fields: [classId], references: [id])
+  studentId String
+  student   Student        @relation("StudentSubjects", fields: [studentId], references: [id])
 
   Schedule Schedule[]
   homeWork HomeWork[]
@@ -258,7 +261,7 @@ model libraryUser {
   updatedAt  DateTime @updatedAt
   assignedBy String?
 
-  user User @relation(fields: [userId], references: [id])
+  user Users @relation(fields: [userId], references: [id])
   checkouts CheckOut[]
 
   @@unique([userId])
@@ -376,15 +379,16 @@ model Student {
   // Academic Information
   rollNumber      Int?          
   currentClass    ClassSection?   @relation("StudentClass", fields: [classId], references: [id])
-  classId         String?
-  section         String?
+  classId         String?         // Make this nullable if the classId can be undefined
+  section         String?         // Nullable to handle missing section
   admissionDate   DateTime        @default(now())
   academicYear    String
+  subjects        Subject[]       @relation("StudentSubjects")
   
   // Relations
   guardian        Guardian?        @relation(fields: [guardianId], references: [id])
-  guardianId      String?
-  user            User            @relation("Student", fields: [userId], references: [id], map: "document_user_fkey")
+  guardianId      String?          
+  user            Users            @relation("Student", fields: [userId], references: [id], map: "document_user_fkey")
   parent          Parent          @relation("ParentStudent", fields: [userId], references: [id], map: "parent_student_fkey")
   previousSchools PreviousSchool[] @relation("StudentPreviousSchools")
   branch          Branch          @relation(fields: [branchId], references: [id])
@@ -401,10 +405,10 @@ model Student {
   documents       Document[]
 
   // Siblings Relation
-  hasSiblings    Boolean         @default(false)
-  siblings       Student[]       @relation("Sibling")
-  siblingOf      Student?       @relation("Sibling", fields: [siblingOfId], references: [id])
-  siblingOfId    String?
+  hasSiblings     Boolean         @default(false)
+  siblings        Student[]       @relation("Sibling")
+  siblingOf       Student?        @relation("Sibling", fields: [siblingOfId], references: [id])
+  siblingOfId     String?
 
   // Status and Timestamps
   status     Status     @default(Active)
@@ -416,6 +420,7 @@ model Student {
   @@index([rollNumber], name: "student_roll_number_index")
 }
 
+
 model PreviousSchool {
   id              String    @id @default(cuid())
   name            String
@@ -423,8 +428,8 @@ model PreviousSchool {
   board           String?
   medium          String?
   yearOfPassing   DateTime
-  percentage      Float?
-  grade           String?
+  percentage      Float
+  grade           String
   reasonForLeaving String?
   documents       Document[] @relation("PreviousSchoolDocuments")
   students        Student[] @relation("StudentPreviousSchools")
@@ -465,7 +470,7 @@ model Parent {
   // System Information
   status          ParentStatus @default(ACTIVE)
   userId          String    @unique
-  user            User      @relation("Parent", fields: [userId], references: [id])
+  user            Users      @relation("Parent", fields: [userId], references: [id])
   branchId        String
   branch          Branch    @relation(fields: [branchId], references: [id])
   createdAt       DateTime  @default(now())
@@ -524,7 +529,7 @@ model Teacher {
   // System Information
   status            TeacherStatus  @default(ACTIVE)
   userId            String         @unique
-  user              User           @relation("Teacher", fields: [userId], references: [id])
+  user              Users          @relation("Teacher", fields: [userId], references: [id])
   branchId          String
   branch            Branch         @relation(fields: [branchId], references: [id])
   bankInfo          Bank?           @relation("TeacherBank", fields: [bankId], references: [id])
@@ -566,7 +571,7 @@ model Staff {
   bankId       String?
   branch        Branch    @relation(fields: [branchId], references: [id])
   branchId      String
-  user          User      @relation("Staff", fields: [userId], references: [id])
+  user          Users     @relation("Staff", fields: [userId], references: [id])
   userId        String    @unique
   announcements Announcement[]
   emergencyContact EmergencyContact?
@@ -723,7 +728,7 @@ model Participant {
   userId    String
   eventId   String
   event     Event    @relation(fields: [eventId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  user      Users    @relation(fields: [userId], references: [id])
   registeredAt DateTime @default(now())
 }
 
@@ -736,7 +741,7 @@ model Announcement {
   staffId     String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  user        User     @relation("UserAnnouncements", fields: [userId], references: [id])
+  user        Users    @relation("UserAnnouncements", fields: [userId], references: [id])
   userId      String
   event       Event    @relation("EventAnnouncements", fields: [eventId], references: [id])
   eventId     String
@@ -839,7 +844,7 @@ model Document {
   fileUrl         String
   description     String?
   uploadedBy      String
-  uploader        User            @relation("DocumentUploader", fields: [uploadedBy], references: [id])
+  uploader        Users           @relation("DocumentUploader", fields: [uploadedBy], references: [id])
   
   // Relations
   student         Student?        @relation(fields: [studentId], references: [id])
@@ -873,9 +878,6 @@ model MedicalHistory {
   id              String     @id @default(cuid())
   studentId       String     @unique
   student         Student    @relation(fields: [studentId], references: [id])
-  bloodGroup      BloodGroup
-  height          Float
-  weight          Float
   allergies       String?
   conditions      String?
   medications     String?
@@ -892,7 +894,7 @@ model Chat {
   name        String?
   isGroup     Boolean     @default(false)
   userId      String
-  participants User      @relation("UserChats", fields: [userId], references: [id])
+  participants Users      @relation("UserChats", fields: [userId], references: [id])
   messages    Message[]
   createdAt   DateTime    @default(now())
 }
@@ -900,7 +902,7 @@ model Chat {
 model Message {
   id          String      @id @default(cuid())
   senderId    String
-  sender      User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  sender      Users        @relation(fields: [senderId], references: [id], onDelete: Cascade)
   chatId      String
   chat        Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
   content     String
@@ -912,7 +914,7 @@ model Message {
 model Notification {
   id          String      @id @default(cuid())
   userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        Users       @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   body        String
   isRead      Boolean     @default(false)
@@ -924,8 +926,8 @@ model Notification {
 model VideoCall {
   id          String      @id @default(cuid())
   hostId      String
-  host        User        @relation(fields: [hostId], references: [id])
-  participants User[]      @relation("CallParticipants")
+  host        Users       @relation(fields: [hostId], references: [id])
+  participants Users[]      @relation("CallParticipants")
   classId     String?
   classSection       ClassSection? @relation(fields: [classId], references: [id])
   startTime   DateTime
@@ -952,7 +954,7 @@ model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      Users    @relation(fields: [userId], references: [id])
   expiresAt DateTime
   createdAt DateTime @default(now())
 
