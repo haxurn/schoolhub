@@ -7,18 +7,18 @@ import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils'; 
 export const loginService = async (username: string, password: string) => {
     try {
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
             where: { username },
         });
 
         if (!user) {
-            throw new Error('User not found');
+            throw new Error('User not found!');
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            throw new Error('Invalid credentials');
+            throw new Error('Invalid credentials!');
         }
 
 
@@ -44,10 +44,10 @@ export const loginService = async (username: string, password: string) => {
         };
     } catch (error: unknown) {
         if (error instanceof Error) {
-            console.error('❌ Error during login:', error.message);
+            console.error('Error during login:', error.message);
             throw new Error(error.message);
         } else {
-            console.error('❌ Unknown error during login:', error);
+            console.error('Unknown error during login:', error);
             throw new Error('Internal server error');
         }
     }
