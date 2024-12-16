@@ -8,6 +8,9 @@ info:
   contact:
     name: SchoolHub Development Team
     email: samitesfaye726@gmail.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
 servers:
   - url: http://localhost:5000/
     description: Local development server
