@@ -1,4 +1,4 @@
-import { prisma } from "../config/dbConfig";
+import { prisma } from "../config/db.config";
 import { bloodGroupToPrisma } from "../enums/student.enum";
 
 interface Student {
