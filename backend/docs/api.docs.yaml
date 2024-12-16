@@ -7,7 +7,7 @@ info:
   description: Comprehensive API documentation for SchoolHub platform
   contact:
     name: SchoolHub Development Team
-    email: support@schoolhub.edu
+    email: samitesfaye726@gmail.com
 servers:
   - url: http://localhost:5000/
     description: Local development server
