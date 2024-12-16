@@ -1,4 +1,4 @@
-import { prisma } from '../config/dbConfig';
+import { prisma } from '../config/db.config';
 import bcrypt from 'bcrypt';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils'; // Assuming you already have these utilities
 
