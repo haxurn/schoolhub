@@ -4,8 +4,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import setupSwagger from './config/swaggerConfig';
-import { checkConnection } from './config/dbConfig';
+import setupSwagger from './config/swagger.config';
+import { checkConnection } from './config/db.config';
 import { sessionMiddleware } from './middleware/session.middleware';
 import cors from 'cors';
 import { csrfProtection } from './middleware/csrf.middleware';
@@ -23,7 +23,7 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(sessionMiddleware);
-app.use(csrfProtection)  // TODO: Enable Csrf
+app.use(csrfProtection)  
 app.use(helmet());
 app.use(express.json());
 
