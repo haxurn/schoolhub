@@ -62,7 +62,7 @@ Welcome to the backend of the SchoolHub project! SchoolHub is a platform that pr
 1. Start the development server:
 
     ```bash
-    npm run dev
+    bun run dev
     # Or if using yarn
     yarn dev
     ```
@@ -71,18 +71,15 @@ Welcome to the backend of the SchoolHub project! SchoolHub is a platform that pr
 
 ## API Endpoints
 
-- **POST /api/auth/login**: Authenticate a user and receive a JWT token.
-- **POST /api/auth/register**: Register a new user.
-- **GET /api/users**: Retrieve a list of users (restricted by roles).
-- **GET /api/courses**: Retrieve all available courses.
-- **POST /api/grades**: Submit grades for students.
-- **GET /api/finance**: Retrieve financial information (restricted to the registrar role).
+- **GET /**: Default, returns a simple message.
+
 
 ## Running Tests
 
 To run the tests for the backend:
 
 ```bash
-npm run test
+bun run start
 # Or if using yarn
-yarn test
+yarn start
+```
