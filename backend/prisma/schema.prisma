@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,1020 +7,193 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model School {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  branches  Branch[]
-}
-
-model Branch {
-  id         String       @id @default(cuid())
-  name       String
-  level      Level
-  addresses  Address[]
-  schoolId   String
-  school     School       @relation(fields: [schoolId], references: [id])
-  students   Student[]
-  teachers   Teacher[]
-  parents    Parent[]
-  classes    Class[]
-  attendance Attendance[] @relation()
-  staff      Staff[]
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  Schedule   Schedule[]
-  Library    Library[]
-  exam       Exam[]
-
-  @@index([name], name: "branch_name_index")
-  @@index([level], name: "branch_level_index")
-}
-
-model Exam {
-  id   String @id @default(cuid())
-  title String
-  description String
-  examDate DateTime
-  startTime DateTime
-  endTime DateTime
-  totalMarks Float
-  passMarks Float
-  branchId String
-  branch Branch @relation(fields: [branchId], references: [id])
-  classSectionId String
-  classSection ClassSection @relation(fields: [classSectionId], references: [id])
-  subjectId String
-  subject Subject @relation(fields: [subjectId], references: [id])
-  teacherId String
-  teacher Teacher @relation(fields: [teacherId], references: [id])
-  examResults ExamResult[] 
-  examType ExamType
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-
-}
-
-model ExamResult {
-  id String @id @default(cuid())
-  examId String
-  exam Exam @relation(fields: [examId], references: [id])
-  studentId String
-  student Student @relation(fields: [studentId], references: [id])
-  marksObtained Float
-  grade Float
-  status ExamStatus
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ClassMark {
-  id String @id @default(cuid())
-  classSectionId String
-  classSection ClassSection @relation("ClassMarkSection", fields: [classSectionId], references: [id])
-  studentId String
-  student Student @relation(fields: [studentId], references: [id])
-  marksObtained Float
-  type ClassMarkType
-  remarks String?
-  subjectId String
-  subject Subject @relation(fields: [subjectId], references: [id])
-  grade Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@index([classSectionId], name: "class_mark_section_index")
-}
-
-enum ClassMarkType {
-  PARTICIPATION
-  CLASSWORK
-  ASSIGNMENT
-  QUIZ
-  PROJECT
-}
-
-enum ExamStatus {
-  Passed
-  Failed 
-  Incomplete
-  Absent
-}
-
-model Users {
-  id                 String        @id @default(cuid())
-  username           String        @unique
-  password           String
-  role               Role
-  status             Status
-  restPassword       String?
-  restPasswordExpiry DateTime?
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  student            Student?      @relation("Student")
-  parent             Parent?       @relation("Parent")
-  teacher            Teacher?      @relation("Teacher")
-  staff              Staff?        @relation("Staff")
-  library            libraryUser[]
-  message            Message[]
-  notification       Notification[]
-  chat               Chat[] @relation("UserChats")
-  videoCall          VideoCall[]
-  participants       VideoCall[] @relation("CallParticipants")
-  participant        Participant[] @relation()
-  accouncement       Announcement[] @relation("UserAnnouncements")
-  refreshToken       RefreshToken[]
-  uploadedDocuments Document[] @relation("DocumentUploader")
-
-  @@index([id], name: "user_relationship_index")
-}
-
-enum ExamType {
-  Quiz
-  Midterm
-  Final
-  Pratical
-  Assignment
-}
-
-model HomeWork {
-  id        String   @id @default(cuid())
-  classId   String
-  class     ClassSection @relation(fields: [classId], references: [id])
-  subjectId String
-  subject   Subject      @relation(fields: [subjectId], references: [id])
-  teacherId String
-  teacher   Teacher      @relation(fields: [teacherId], references: [id])
-  title     String
-  description String
-  dueDate   DateTime
-  attachment String?
-  submissions Submission[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-
-
-model Schedule {
-  id        String       @id @default(cuid())
-  userId    String
-  branchId  String
-  branch    Branch       @relation(fields: [branchId], references: [id])
-  teacherId String
-  teacher   Teacher      @relation(fields: [teacherId], references: [id])
-  subjectId String
-  subject   Subject      @relation(fields: [subjectId], references: [id])
-  classId   String
-  class     ClassSection @relation(fields: [classId], references: [id])
-  day       Day
-  startTime String
-}
-
-model Subject {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  teacherId String
-  teacher   Teacher        @relation(fields: [teacherId], references: [id])
-  classId   String
-  class     ClassSection   @relation("SubjectClass", fields: [classId], references: [id])
-  studentId String
-  student   Student        @relation("StudentSubjects", fields: [studentId], references: [id])
-
-  Schedule Schedule[]
-  homeWork HomeWork[]
-  exam     Exam[]
-  classMark ClassMark[]
-}
-
-model Address {
-  id          String    @id @default(cuid())
-  street      String
-  city        String
-  state       String
-  country     String
-  zipCode     String
-  staffId     String?
-  staff       Staff?    @relation(fields: [staffId], references: [id])
-  branchId    String?
-  branch      Branch?   @relation(fields: [branchId], references: [id])
-  parentId    String?
-  parent      Parent?   @relation(fields: [parentId], references: [id])
-  teacherId   String?
-  teacher     Teacher?  @relation(fields: [teacherId], references: [id])
-  guardianId  String?
-  guardian    Guardian? @relation(fields: [guardianId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-
-model Attendance {
-  id        String           @id @default(cuid())
-  studentId String
-  student   Student          @relation("Attendance", fields: [studentId], references: [id])
-  branchId  String
-  branch    Branch           @relation(fields: [branchId], references: [id])
-  date      DateTime
-  status    AttendanceStatus
-  comments  String?
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-}
-
-enum AttendanceStatus {
-  present
-  absent
-  late
-}
-
-model Library {
-  id      String   @id @default(cuid())
-  name    String
-  branchId String
-  branch  Branch   @relation(fields: [branchId], references: [id])
-  book    Book[]  
-}
-
-model libraryUser {
-  id         String   @id @default(cuid())
-  userId     String
-  role       Role
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  assignedBy String?
-
-  user Users @relation(fields: [userId], references: [id])
-  checkouts CheckOut[]
-
-  @@unique([userId])
-}
-
-model Book {
-  id            String          @id @default(cuid())
-  title         String
-  author        String
-  isbn          String         @unique
-  publishedYear Int
-  publisher     String
-  edition      String?
-  category      BookCategory
-  language      Language
-  description   String?
-  quantity      Int
-  availableQty  Int
-  price         Float
-  location      String?
-  coverImage    String?
-  status        BookStatus     @default(Available)
-  libraryId     String
-  library       Library        @relation(fields: [libraryId], references: [id])
-  checkouts     CheckOut[]
-  reviews       BookReview[]
-  reservations  BookReservation[]
-  documents     Document[]     // Add relation to Document
-  averageRating Float          @default(0)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  @@index([title, author])
-  @@index([category])
-  @@index([status])
-}
-
-model BookReview {
-  id        String   @id @default(cuid())
-  bookId    String
-  book      Book     @relation(fields: [bookId], references: [id])
-  studentId String
-  student   Student  @relation(fields: [studentId], references: [id])
-  rating    Float
-  review    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([bookId, studentId])
-  @@index([rating])
-}
-
-model BookReservation {
-  id        String           @id @default(cuid())
-  bookId    String
-  book      Book            @relation(fields: [bookId], references: [id])
-  studentId String
-  student   Student         @relation(fields: [studentId], references: [id])
-  status    ReservationStatus @default(Pending)
-  expiresAt DateTime
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-
-  @@index([status])
-  @@index([expiresAt])
-}
-
-enum ReservationStatus {
-  Pending
-  Fulfilled
-  Expired
-  Cancelled
-}
-
-enum BookStatus {
-  Available
-  CheckedOut
-  Damaged
-  Reserved
-  Maintenance
-  Lost
-}
-
-enum BookCategory {
-  Fiction
-  Non_Fiction
-  Reference
-  Textbook
-  Magazine
-  Biograpy
-  History
-  Science
-  Technology
-  Arts
-  Literature
-  Philosophy
-  Religion
-  Social_Sciences
-  Sports
-  Other
-}
-
-model Student {
-  id              String          @id @default(cuid())
-  firstName       String
-  lastName        String
-  email           String?         @unique
-  phone           String?         @unique
-  dateOfBirth     DateTime
-  gender          Gender
-  bloodGroup      BloodGroup
-  nationality     Nationality
-  religion        Religion
-  
-  // Academic Information
-  rollNumber      Int?          
-  currentClass    ClassSection?   @relation("StudentClass", fields: [classId], references: [id])
-  classId         String?         // Make this nullable if the classId can be undefined
-  section         String?         // Nullable to handle missing section
-  admissionDate   DateTime        @default(now())
-  academicYear    String
-  subjects        Subject[]       @relation("StudentSubjects")
-  
-  // Relations
-  guardian        Guardian?        @relation(fields: [guardianId], references: [id])
-  guardianId      String?          
-  user            Users            @relation("Student", fields: [userId], references: [id], map: "document_user_fkey")
-  parent          Parent          @relation("ParentStudent", fields: [userId], references: [id], map: "parent_student_fkey")
-  previousSchools PreviousSchool[] @relation("StudentPreviousSchools")
-  branch          Branch          @relation(fields: [branchId], references: [id])
-  attendance      Attendance[]    @relation("Attendance")
-  submissions     Submission[]
-  branchId        String
-  userId          String          @unique
-  examResult      ExamResult[]
-  classMark       ClassMark[]
-  medicalHistory  MedicalHistory[]
-  checkOut        CheckOut[]
-  bookReviews     BookReview[]
-  bookReservations BookReservation[]
-  documents       Document[]
-
-  // Siblings Relation
-  hasSiblings     Boolean         @default(false)
-  siblings        Student[]       @relation("Sibling")
-  siblingOf       Student?        @relation("Sibling", fields: [siblingOfId], references: [id])
-  siblingOfId     String?
-
-  // Status and Timestamps
-  status     Status     @default(Active)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  @@index([firstName, lastName], name: "student_name_index")
-  @@index([email], name: "student_email_index")
-  @@index([rollNumber], name: "student_roll_number_index")
-}
-
-
-model PreviousSchool {
-  id              String    @id @default(cuid())
-  name            String
-  address         String
-  board           String?
-  medium          String?
-  yearOfPassing   DateTime
-  percentage      Float
-  grade           String
-  reasonForLeaving String?
-  documents       Document[] @relation("PreviousSchoolDocuments")
-  students        Student[] @relation("StudentPreviousSchools")
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-}
-
-model Parent {
-  id              String    @id @default(cuid())
-  // Personal Information
-  firstName       String
-  lastName        String
-  email           String    @unique
-  phone           String    @unique
-  occupation      String?
-  
-  // Contact Information
-  addresses       Address[]
-  alternativePhone String?
-  
-  // Parent Details
-  fatherName      String
-  motherName      String
-  fatherPhone     String
-  motherPhone     String
-  fatherEmail     String    @unique
-  motherEmail     String    @unique
-  fatherOccupation String?
-  motherOccupation String?
-  annualIncome    Float?
-  
-  // Documents and Relations
-  documents       Document[]
-  children        Student[]  @relation("ParentStudent")
-  nationality     Nationality
-  religion        Religion?
-  
-  // System Information
-  status          ParentStatus @default(ACTIVE)
-  userId          String    @unique
-  user            Users      @relation("Parent", fields: [userId], references: [id])
-  branchId        String
-  branch          Branch    @relation(fields: [branchId], references: [id])
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  @@index([firstName, lastName], name: "parent_name_index")
-  @@index([email], name: "parent_email_index")
-  @@index([phone], name: "parent_phone_index")
-}
-
-model Teacher {
-  id                String         @id @default(cuid())
-  // Personal Information
-  firstName         String
-  lastName          String
-  email             String         @unique
-  phone             String         @unique
-  dateOfBirth       DateTime
-  gender            Gender
-  bloodGroup        BloodGroup
-  nationality       Nationality
-  religion          Religion?
-  maritalStatus     MaritalStatus
-  
-  // Professional Information
-  employeeId        String         @unique
-  qualification     String[]       // Array of qualifications
-  specialization    String[]       // Array of specializations
-  experience        Int            @default(0)
-  dateOfJoining     DateTime       @default(now())
-  designation       String
-  department        Department
-  salary            Float
-  role              String         // Added role field
-  
-  // Teaching Information
-  subjects          Subject[]
-  classSections     ClassSection[]
-  schedule          Schedule[]
-  homeWork          HomeWork[]
-  exam              Exam[]
-  leaves            Leave[]
-  performances      Performance[]
-  
-  // Contact and Social
-  addresses         Address[]
-  emergencyContact  String?
-  socialMedia       Json?          // Store social media links
-  
-  // Documents and Additional Info
-  documents         Document[]
-  achievements      String?        // JSON array of achievements
-  certifications    String?        // JSON array of certifications
-  publications      String?        // JSON array of publications
-  
-  // System Information
-  status            TeacherStatus  @default(ACTIVE)
-  userId            String         @unique
-  user              Users          @relation("Teacher", fields: [userId], references: [id])
-  branchId          String
-  branch            Branch         @relation(fields: [branchId], references: [id])
-  bankInfo          Bank?           @relation("TeacherBank", fields: [bankId], references: [id])
-  bankId            String?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-
-  @@index([firstName, lastName], name: "teacher_name_index")
-  @@index([email], name: "teacher_email_index")
-  @@index([employeeId], name: "teacher_employee_index")
-}
-
-model Staff {
-  id            String    @id @default(cuid())
-  firstName     String
-  lastName      String
-  email         String    @unique
-  phone         String    @unique
-  dateOfBirth   DateTime
+model User {
+  id            String        @id @default(cuid())
+  username      String        @unique
+  email         String?       @unique
+  phone         String?       @unique
+  password      String
+  roleId        String
+  role          Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  sectionId     String?
+  section       Section?      @relation("UserSection", fields: [sectionId], references: [id], onDelete: Cascade)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+  status        Status        @default(active)
+  image         String?
   gender        Gender
   bloodGroup    BloodGroup
-  nationality   Nationality
-  religion      Religion?
-  maritalStatus MaritalStatus
-  
-  // Professional Information
-  employeeId    String    @unique
-  designation   String
-  department    Department
-  role          StaffRole // Add role field
-  salary        Float
-  dateOfJoining DateTime  @default(now())
-  experience    Int       @default(0)
-  
-  // Relations
-  documents     Document[]
-  addresses     Address[]
-  bank         Bank?     @relation("StaffBank", fields: [bankId], references: [id])
-  bankId       String?
-  branch        Branch    @relation(fields: [branchId], references: [id])
-  branchId      String
-  user          Users     @relation("Staff", fields: [userId], references: [id])
-  userId        String    @unique
-  announcements Announcement[]
-  emergencyContact EmergencyContact?
-  leave         Leave[]
-  performance   Performance[]
-  
-  // Status and Timestamps
-  status        StaffStatus @default(ACTIVE)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  motherTongue  String
+  religion      String
+  languageKnown String
+  sessions      Session[]
+  files         File[]
+  activityLogs  ActivityLog[]
+  addressId     String?
+  address       Address[]
 
-  @@index([firstName, lastName])
-  @@index([email])
-  @@index([employeeId])
+  @@map("user")
 }
 
-enum StaffRole {
-  ADMIN
-  TEACHER
-  SUPPORT
-  MANAGER
+model Role {
+  id    String @id @default(cuid())
+  name  String @unique
+  users User[]
+
+  @@map("role")
 }
 
-model Bank {
-  id            String    @id @default(cuid())
-  name          String
-  branch        String
-  accountNumber String    @unique
-  ifscCode      String
-  accountType   String
-  documents     Document[] @relation("BankDocuments")
-  staffMembers  Staff[]   @relation("StaffBank")
-  teachers      Teacher[] @relation("TeacherBank")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    Status
+  address   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([name])
-  @@index([accountNumber])
-  @@index([ifscCode])
+  @@map("session")
 }
 
-enum Role {
-  admin
-  student
-  staff
-  parent
-  teacher
-  library
-}
+model File {
+  id        String   @id @default(cuid())
+  fileName  String
+  fileType  String
+  location  String
+  fileSize  Int?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-enum Status {
-  Active
-  Inactive
-  Suspended
-}
-
-enum GuardianType {
-  LegalGuardian
-  Relative
-}
-
-enum BloodGroup {
-  A_PLUS
-  A_MINUS
-  B_PLUS
-  B_MINUS
-  O_PLUS
-  O_MINUS
-  AB_PLUS
-  AB_MINUS
-}
-
-enum Gender {
-  Male
-  Female
-}
-
-enum Religion {
-  Christian
-  Muslim
-  Other
-}
-
-enum Nationality {
-  Ethiopian
-  Foreign
+  @@map("file")
 }
 
 model Class {
-  id        String         @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  level     Level
-  sections  ClassSection[] @relation("ClassSections")
-  branch    Branch         @relation(fields: [branchId], references: [id])
-  branchId  String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  sections  Section[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("class")
 }
 
-model ClassSection {
-  id            String    @id @default(cuid())
-  name          String
-  section       String
-  capacity      Int
-  students      Student[] @relation("StudentClass")
-  teachers      Teacher[]
-  schedule      Schedule[]
-  homeWork      HomeWork[]
-  exam          Exam[]
-  videoCalls    VideoCall[]
-  classMarks    ClassMark[] @relation("ClassMarkSection")
-  subjects      Subject[] @relation("SubjectClass")
-  classes       Class[] @relation("ClassSections")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@unique([name, section])
-}
-
-model Event {
-  id            String      @id @default(cuid())
-  name          String
-  description   String?
-  startDate     DateTime
-  endDate       DateTime
-  location      String
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  categoryId    String
-  category      EventCategory @relation(fields: [categoryId], references: [id])
-  organizerId   String
-  organizer     Organizer     @relation(fields: [organizerId], references: [id])
-  participants  Participant[]
-  accountId     String
-  announcement  Announcement[] @relation("EventAnnouncements")
-}
-
-model EventCategory {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-  events      Event[] @relation()
-}
-
-model Organizer {
-  id          String  @id @default(cuid())
-  name        String
-  contactInfo String
-  events      Event[] @relation()
-}
-
-model Participant {
+model Section {
   id        String   @id @default(cuid())
-  userId    String
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
-  user      Users    @relation(fields: [userId], references: [id])
-  registeredAt DateTime @default(now())
-}
-
-model Announcement {
-  id          String   @id @default(cuid())
-  title       String
-  content     String
-  message     String
-  staff       Staff    @relation(fields: [staffId], references: [id])
-  staffId     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        Users    @relation("UserAnnouncements", fields: [userId], references: [id])
-  userId      String
-  event       Event    @relation("EventAnnouncements", fields: [eventId], references: [id])
-  eventId     String
-  type        AnnouncementType @relation("TypeAnnouncements", fields: [typeId], references: [id])
-  typeId      String
-
-  @@index([staffId])
-}
-
-model AnnouncementType {
-  id          String        @id @default(cuid())
-  name        String        @unique
-  description String?
-  announcements Announcement[] @relation("TypeAnnouncements")
-}
-
-enum Level {
-  Primary
-  Secondary
-}
-
-enum ParentStatus {
-  ACTIVE
-  INACTIVE
-  BLOCKED
-}
-
-enum TeacherStatus {
-  ACTIVE
-  ON_LEAVE
-  SUSPENDED
-  TERMINATED
-  RETIRED
-}
-
-enum MaritalStatus {
-  SINGLE
-  MARRIED
-  DIVORCED
-  WIDOWED
-}
-
-model Leave {
-  id        String   @id @default(cuid())
-  startDate DateTime
-  endDate   DateTime
-  reason    String
-  status    String
-  teacherId String
-  teacher   Teacher  @relation(fields: [teacherId], references: [id])
-  staffId   String?
-  staff     Staff?   @relation(fields: [staffId], references: [id])
+  section   String
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  users     User[]   @relation("UserSection")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([classId, section])
+  @@map("section")
 }
 
-model Performance {
-  id        String   @id @default(cuid())
-  evaluation String
-  teacherId  String
-  teacher    Teacher  @relation(fields: [teacherId], references: [id])
-  staffId    String?
-  staff      Staff?   @relation(fields: [staffId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model Student {
+  id            String           @id @default(cuid())
+  firstName     String
+  lastName      String
+  birthDate     DateTime
+  age           Int
+  sectionId     String
+  parentId      String
+  parent        Parent           @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  admissionDate DateTime
+  rollNumber    Int
+  siblings      StudentSibling[] @relation("StudentSiblings")
+  relatedTo     StudentSibling[] @relation("RelatedSiblings")
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([sectionId, rollNumber])
+  @@map("student")
 }
 
-model Submission {
+model StudentSibling {
+  id           String  @id @default(cuid())
+  studentId    String
+  siblingId    String
+  relationship String?
+  student      Student @relation("StudentSiblings", fields: [studentId], references: [id], onDelete: Cascade)
+  sibling      Student @relation("RelatedSiblings", fields: [siblingId], references: [id], onDelete: Cascade)
+}
+
+model Address {
   id        String   @id @default(cuid())
-  studentId String
-  homeWorkId String
-  student   Student @relation(fields: [studentId], references: [id])
-  homeWork  HomeWork @relation(fields: [homeWorkId], references: [id])
-  grade     Float?
-  feedback  String?
-  isLate    Boolean
+  city      String?
+  subCity   String
+  woreda    String
+  kebele    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Guardian {
-  id            String    @id @default(cuid())
-  relation        GuardianType
-  firstName       String
-  LastName        String
-  email           String
-  phone           String
-  guardianAddress String
-  student         Student[]    @relation()
-  documents       Document[] @relation("GuardianDocuments") // Add relation name
-  addresses       Address[]
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-}
-
-model Document {
-  id              String          @id @default(cuid())
-  title           String
-  type            String
-  fileUrl         String
-  description     String?
-  uploadedBy      String
-  uploader        Users           @relation("DocumentUploader", fields: [uploadedBy], references: [id])
-  
-  // Relations
-  student         Student?        @relation(fields: [studentId], references: [id])
-  studentId       String?
-  teacher         Teacher?        @relation(fields: [teacherId], references: [id])
-  teacherId       String?
-  parent          Parent?         @relation(fields: [parentId], references: [id])
-  parentId        String?
-  staff           Staff?          @relation(fields: [staffId], references: [id])
-  staffId         String?
-  book            Book?           @relation(fields: [bookId], references: [id]) // Add relation field
-  bookId          String?
-  bank            Bank?           @relation("BankDocuments", fields: [bankId], references: [id])
-  bankId          String?
-  medicalHistory  MedicalHistory? @relation("MedicalHistoryDocuments", fields: [medicalHistoryId], references: [id])
-  medicalHistoryId String?
-  previousSchool  PreviousSchool? @relation("PreviousSchoolDocuments", fields: [previousSchoolId], references: [id])
-  previousSchoolId String?
-  guardian        Guardian?       @relation("GuardianDocuments", fields: [guardianId], references: [id])
-  guardianId      String?
-  
-  // Timestamps
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-
-  @@index([type], name: "document_type_index")
-  @@index([uploadedBy], name: "document_uploader_index")
-}
-
-model MedicalHistory {
-  id              String     @id @default(cuid())
-  studentId       String     @unique
-  student         Student    @relation(fields: [studentId], references: [id])
-  allergies       String?
-  conditions      String?
-  medications     String?
-  emergencyContact String?
-  documents       Document[] @relation("MedicalHistoryDocuments") // Add relation name
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-
-  @@index([studentId], name: "medical_history_student_index")
-}
-
-model Chat {
-  id          String      @id @default(cuid())
-  name        String?
-  isGroup     Boolean     @default(false)
-  userId      String
-  participants Users      @relation("UserChats", fields: [userId], references: [id])
-  messages    Message[]
-  createdAt   DateTime    @default(now())
-}
-
-model Message {
-  id          String      @id @default(cuid())
-  senderId    String
-  sender      Users        @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  chatId      String
-  chat        Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  content     String
-  createdAt   DateTime    @default(now())
-
-  @@index([senderId, chatId])
-}
-
-model Notification {
-  id          String      @id @default(cuid())
-  userId      String
-  user        Users       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title       String
-  body        String
-  isRead      Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-
-  @@index([userId, isRead])
-}
-
-model VideoCall {
-  id          String      @id @default(cuid())
-  hostId      String
-  host        Users       @relation(fields: [hostId], references: [id])
-  participants Users[]      @relation("CallParticipants")
-  classId     String?
-  classSection       ClassSection? @relation(fields: [classId], references: [id])
-  startTime   DateTime
-  endTime     DateTime?
-  isAudioOnly Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-
-  @@index([hostId])
-}
-
-model EmergencyContact {
-  id          String   @id @default(cuid())
-  name        String
-  relationship String
-  phone       String
-  address     String?
-  staff       Staff    @relation(fields: [staffId], references: [id])
-  staffId     String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model RefreshToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
   userId    String
-  user      Users    @relation(fields: [userId], references: [id])
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@map("address")
 }
 
-enum StaffStatus {
-  ACTIVE
-  ON_LEAVE
-  SUSPENDED
-  TERMINATED
-  RETIRED
+model Parent {
+  id               String    @id @default(cuid())
+  motherName       String
+  fatherName       String
+  fatherEmail      String
+  motherEmail      String
+  fatherPhone      String
+  motherPhone      String
+  fatherOccupation String
+  motherOccupation String
+  isGuardian       Boolean   @default(false)
+  children         Student[]
+
+  @@map("parent")
 }
 
-enum Department {
-  ADMINISTRATION
-  FINANCE
-  LIBRARY
-  HEALTH
-  IT
-  MAINTENANCE
-  SECURITY
-  STUDENT_AFFAIRS
-  OTHER
+model ActivityLog {
+  id          String   @id @default(cuid())
+  action      String
+  performedAt DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entity      String
+  entityId    String
+  details     Json
+
+  @@map("activity_log")
 }
 
-enum Day {
-  Monday
-  Tuesday
-  Wednesday
-  Thursday
-  Friday
-  Saturday
-  Sunday
+enum BloodGroup {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  O_POS
+  O_NEG
+  AB_POS
+  AB_NEG
 }
 
-enum Language {
-  ENGLISH
-  AMHARIC
-  Oromifa
-  OTHER
+enum RoleType {
+  admin
+  student
+  parent
+  library
+  teacher
 }
 
-model CheckOut {
-  id            String    @id @default(cuid())
-  bookId        String
-  book          Book      @relation(fields: [bookId], references: [id])
-  userId        String
-  user          libraryUser @relation(fields: [userId], references: [id])
-  studentId     String
-  student       Student   @relation(fields: [studentId], references: [id])
-  checkOutDate  DateTime  @default(now())
-  dueDate       DateTime
-  returnDate    DateTime?
-  renewalCount  Int       @default(0)
-  maxRenewals   Int       @default(2)
-  status        CheckOutStatus @default(CHECKED_OUT)
-  fine          Float     @default(0)
-  remarks       String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@index([bookId], name: "checkout_book_index")
-  @@index([userId], name: "checkout_user_index")
-  @@index([status], name: "checkout_status_index")
+enum Gender {
+  male
+  female
 }
 
-enum CheckOutStatus {
-  CHECKED_OUT
-  RENEWED
-  RETURNED
-  OVERDUE
-  LOST
-  DAMAGED
+enum Status {
+  active
+  inactive
 }
