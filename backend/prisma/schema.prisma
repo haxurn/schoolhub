@@ -126,6 +126,10 @@ model StudentSibling {
   sibling      Student @relation("RelatedSiblings", fields: [siblingId], references: [id], onDelete: Cascade)
 }
 
+model library {
+  id    String @id @default(cuid())
+  
+}
 model Address {
   id        String   @id @default(cuid())
   city      String?
@@ -150,11 +154,33 @@ model Parent {
   motherPhone      String
   fatherOccupation String
   motherOccupation String
-  isGuardian       Boolean   @default(false)
+  isGuardian       Boolean   
   children         Student[]
 
   @@map("parent")
 }
+
+
+model Teacher {
+  id    String @id @default(cuid())
+  firstName String 
+  lastName String
+
+  bankInfo Bank[]
+}
+
+model Bank {
+  id    String @id @default(cuid())
+  accountNumber String
+  bankName String
+  accountName String
+  teacherId String
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
 model ActivityLog {
   id          String   @id @default(cuid())
