@@ -1,4 +1,4 @@
-// backend/middleware/csrfMiddleware.ts
+// backend/middleware/csrf.middleware.ts
 
 import csrf from 'csurf';
 

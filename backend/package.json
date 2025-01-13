@@ -17,7 +17,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "6.1.0",
+    "@prisma/client": "6.0.1",
     "@types/express-rate-limit": "6.0.2",
     "@types/js-yaml": "^4.0.9",
     "@types/lodash.escape": "^4.0.9",
@@ -34,7 +34,7 @@
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "2.0.0-rc.4",
-    "prisma": "^6.0.1",
+    "prisma": "^6.2.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.17.0",
