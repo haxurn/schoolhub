@@ -17,7 +17,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "6.0.1",
+    "@prisma/client": "6.1.0",
     "@types/express-rate-limit": "6.0.2",
     "@types/js-yaml": "^4.0.9",
     "@types/lodash.escape": "^4.0.9",
