@@ -43,6 +43,74 @@ components:
           type: string
         data:
           type: object
+    CreateSessionRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: The ID of the user for whom the session is created
+    RefreshSessionRequest:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          description: The refresh token to refresh the session
+    LogSessionActionRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          description: The action to log
+        sessionId:
+          type: string
+          description: The ID of the session to log the action for
+    InvalidateSessionRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: The ID of the session to invalidate
+    GetSessionResponse:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: The ID of the session
+        userId:
+          type: string
+          description: The ID of the user associated with the session
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp when the session was created
+        expiresAt:
+          type: string
+          format: date-time
+          description: The timestamp when the session expires
+    LoginRequest:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: User's email address or username
+        password:
+          type: string
+          description: User's password
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        accessToken:
+          type: string
+          description: JWT access token
+        refreshToken:
+          type: string
+          description: JWT refresh token
+        sessionId:
+          type: string
+          description: ID of the created session
 security:
   - bearerAuth: []
 paths:
@@ -57,3 +125,143 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
+  /api/v1/session/create:
+    post:
+      tags: [Session]
+      summary: Create a new session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '200':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/session/refresh:
+    post:
+      tags: [Session]
+      summary: Refresh an existing session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshSessionRequest'
+      responses:
+        '200':
+          description: Session refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/session/log:
+    post:
+      tags: [Session]
+      summary: Log a session action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogSessionActionRequest'
+      responses:
+        '200':
+          description: Session action logged successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/session/invalidate:
+    post:
+      tags: [Session]
+      summary: Invalidate a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvalidateSessionRequest'
+      responses:
+        '200':
+          description: Session invalidated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/session/:id:
+    get:
+      tags: [Session]
+      summary: Get a session by ID
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Session retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSessionResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/auth/login:
+    post:
+      tags: [Auth]
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
