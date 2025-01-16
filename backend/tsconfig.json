@@ -1,17 +1,17 @@
 {
-  "compilerOptions": {
-    "forceConsistentCasingInFileNames": true,
-    "target": "ES2020",
-    "module": "CommonJS",
-    "outDir": "./dist",
-    "rootDir": "./",
-    "types": ["node"],
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types", "./backend/types"]
-  },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "dist"]
-}
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "./dist",
+        "rootDir": "./",
+        "types": ["node"],
+        "resolveJsonModule": true,
+        "typeRoots": ["./node_modules/@types", "./backend/types"]
+    },
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules", "dist"]
+} 
