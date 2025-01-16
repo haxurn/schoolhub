@@ -1,10 +1,8 @@
-# backend/docs/api.docs.yaml
-
 openapi: 3.1.0
 info:
   title: School Hub API
   version: 1.0.0
-  description: Comprehensive API documentation for SchoolHub platform
+  description: API documentation for the SchoolHub application
   contact:
     name: SchoolHub Development Team
     email: samitesfaye726@gmail.com
@@ -12,234 +10,17 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:5000/
-    description: Local development server
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  schemas:
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-          description: Error message
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              message:
-                type: string
-    SuccessResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        data:
-          type: object
-    CreateSessionRequest:
-      type: object
-      properties:
-        userId:
-          type: string
-          description: The ID of the user for whom the session is created
-    RefreshSessionRequest:
-      type: object
-      properties:
-        refreshToken:
-          type: string
-          description: The refresh token to refresh the session
-    LogSessionActionRequest:
-      type: object
-      properties:
-        action:
-          type: string
-          description: The action to log
-        sessionId:
-          type: string
-          description: The ID of the session to log the action for
-    InvalidateSessionRequest:
-      type: object
-      properties:
-        sessionId:
-          type: string
-          description: The ID of the session to invalidate
-    GetSessionResponse:
-      type: object
-      properties:
-        sessionId:
-          type: string
-          description: The ID of the session
-        userId:
-          type: string
-          description: The ID of the user associated with the session
-        createdAt:
-          type: string
-          format: date-time
-          description: The timestamp when the session was created
-        expiresAt:
-          type: string
-          format: date-time
-          description: The timestamp when the session expires
-    LoginRequest:
-      type: object
-      properties:
-        identifier:
-          type: string
-          description: User's email address or username
-        password:
-          type: string
-          description: User's password
-    LoginResponse:
-      type: object
-      properties:
-        message:
-          type: string
-          description: Success message
-        accessToken:
-          type: string
-          description: JWT access token
-        refreshToken:
-          type: string
-          description: JWT refresh token
-        sessionId:
-          type: string
-          description: ID of the created session
-security:
-  - bearerAuth: []
+  - url: http://localhost:5000/api
+    description: Development server
+
 paths:
-  /:
-    get:
-      tags: [Default]
-      summary: Home
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-  /api/v1/session/create:
+  /auth/login:
     post:
-      tags: [Session]
-      summary: Create a new session
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateSessionRequest'
-      responses:
-        '200':
-          description: Session created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /api/v1/session/refresh:
-    post:
-      tags: [Session]
-      summary: Refresh an existing session
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RefreshSessionRequest'
-      responses:
-        '200':
-          description: Session refreshed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /api/v1/session/log:
-    post:
-      tags: [Session]
-      summary: Log a session action
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LogSessionActionRequest'
-      responses:
-        '200':
-          description: Session action logged successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /api/v1/session/invalidate:
-    post:
-      tags: [Session]
-      summary: Invalidate a session
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/InvalidateSessionRequest'
-      responses:
-        '200':
-          description: Session invalidated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /api/v1/session/:id:
-    get:
-      tags: [Session]
-      summary: Get a session by ID
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Session retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSessionResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /api/v1/auth/login:
-    post:
-      tags: [Auth]
       summary: User login
+      description: Authenticate a user and return a JWT token along with user information.
+      tags:
+        - Authentication
+      operationId: loginUser  
       requestBody:
         required: true
         content:
@@ -248,20 +29,838 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
-          description: Login successful
+          description: User logged in successfully.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
         '401':
-          description: Unauthorized
+          description: Invalid username or password.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
         '500':
-          description: Internal server error
+          description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /roles:
+    post:
+      summary: Create a new role
+      description: Creates a new role in the system.
+      operationId: createRole
+      tags:
+        - Roles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+      responses:
+        '201':
+          description: Role created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleValidationError'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleCreateErrorResponse'
+
+    get:
+      summary: Get all roles
+      description: Retrieves a list of all roles in the system.
+      operationId: getAllRoles
+      tags:
+        - Roles
+      responses:
+        '200':
+          description: A list of roles.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoleResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleGetErrorResponse'
+
+  /roles/{id}:
+    get:
+      summary: Get a role by ID
+      description: Retrieves a specific role by its ID.
+      tags:
+        - Roles
+      operationId: getRoleById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the role to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Role retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '404':
+          description: Role not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleGetErrorResponse'
+    put:
+      summary: Update a role
+      description: Updates a specific role by its ID.
+      tags:
+        - Roles
+      operationId: updateRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the role to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+      responses:
+        '200':
+          description: Role updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleValidationError'
+        '404':
+          description: Role not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleGetErrorResponse'
+    delete:
+      summary: Delete a role
+      description: Deletes a specific role by its ID.
+      tags:
+        - Roles
+      operationId: deleteRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the role to delete.
+          schema:
+          type: string
+      responses:
+        '204':
+          description: Role deleted successfully.
+        '404':
+          description: Role not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleDeleteErrorResponse'
+    
+  /permissions:
+      post:
+        summary: Create a new permission
+        description: Creates a new permission in the system.
+        operationId: createPermission
+        tags:
+          - Permissions
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionRequest'
+        responses:
+          '201':
+            description: Permission created successfully.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionResponse'
+          '400':
+            description: Validation error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionValidationError'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionCreateErrorResponse'
+      get:
+        summary: Get all permissions
+        description: Retrieves a list of all permissions in the system.
+        operationId: getAllPermissions
+        tags:
+          - Permissions
+        responses:
+          '200':
+            description: A list of permissions.
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PermissionResponse'
+          '400':
+            description: Validation error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGetErrorResponse'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGetErrorResponse'
+  /permissions/{id}:
+      get:
+        summary: Get a permission by ID
+        description: Retrieves a specific permission by its ID.
+        tags:
+          - Permissions
+        operationId: getPermissionById
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the permission to retrieve.
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Permission retrieved successfully.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionResponse'
+          '404':
+            description: Permission not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionNotFoundResponse'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGetErrorResponse'
+      put:
+        summary: Update a permission
+        description: Updates a specific permission by its ID.
+        tags:
+          - Permissions
+        operationId: updatePermission
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the permission to update.
+            schema:
+              type: string
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionRequest'
+        responses:
+          '200':
+            description: Permission updated successfully.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionResponse'
+          '400':
+            description: Validation error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionValidationError'
+          '404':
+            description: Permission not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionNotFoundResponse'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGetErrorResponse'
+      delete:
+        summary: Delete a permission
+        description: Deletes a specific permission by its ID.
+        tags:
+          - Permissions
+        operationId: deletePermission
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the permission to delete.
+            schema:
+              type: string
+        responses:
+          '204':
+            description: Permission deleted successfully.
+          '404':
+            description: Permission not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionNotFoundResponse'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionDeleteErrorResponse'
+  /permissions-groups:
+      post:
+        summary: Create a new permission group
+        description: Creates a new permission group in the system.
+        operationId: createPermissionGroup
+        tags:
+          - Permissions
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupRequest'
+        responses:
+          '201':
+            description: Permission group created successfully.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupResponse'
+          '400':
+            description: Validation error.
+            content:
+              application/json: 
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupValidationError'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupCreateErrorResponse'
+      get:
+        summary: Get all permission groups
+        description: Retrieves a list of all permission groups in the system.
+        operationId: getAllPermissions
+        tags:
+          - Permissions
+        responses:
+          '200':
+            description: A list of permission groups.
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PermissionGroupResponse'
+          '400':
+            description: Validation error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
+  /permissions-groups/{id}:
+      get:
+        summary: Get a permission group by ID
+        description: Retrieves a specific permission group by its ID.
+        tags:
+          - Permissions
+        operationId: getPermissionGroupById
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the permission group to retrieve.
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Permission group retrieved successfully.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupResponse'
+          '404':
+            description: Permission group not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
+      put:
+        summary: Update a permission group
+        description: Updates a specific permission group by its ID.
+        tags:
+          - Permissions
+        operationId: updatePermissionGroup
+        parameters:
+          - name: id
+            in: path            
+            required: true
+            description: The ID of the permission group to update.
+            schema:
+              type: string
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupRequest'
+        responses:
+          '200':
+            description: Permission group updated successfully.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupResponse'
+          '400':
+            description: Validation error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupValidationError'
+          '404':
+            description: Permission group not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema: 
+                  $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
+      delete:
+        summary: Delete a permission group
+        description: Deletes a specific permission group by its ID.
+        tags:
+          - Permissions
+        operationId: deletePermissionGroup
+        parameters:
+          - name: id
+            in: path
+            required: true
+            description: The ID of the permission group to delete.
+            schema:
+              type: string
+        responses:
+          '204':
+            description: Permission group deleted successfully.
+          '404':
+            description: Permission group not found.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/PermissionGroupDeleteErrorResponse'
+        security:
+          - bearerAuth: []
+            
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: 'john_doe'  
+        password:
+          type: string
+          example: 'password123'
+      required:
+        - username
+        - password
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNT"
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "921126bb-e3b9-47d5-a519-d2fd5348d901"
+            username:
+              type: string
+              example: "john_doe"
+            email:
+              type: string
+              nullable: true
+              example: "4kZtH@example.com"
+            name:
+              type: string
+              example: "John Doe"
+            image:
+              type: string
+              nullable: true
+              example: "https://example.com/avatar.jpg"
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Invalid username or password."
+    ValidationErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Validation error."
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Username is required."
+              path:
+                type: string 
+    RoleRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Admin"
+        description:
+          type: string
+          example: "Administrator role with full access."
+      required:
+        - name
+
+    RoleResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "921126bb-e3b9-47d5-a519-d2fd5348d901"
+        name:
+          type: string
+          example: "Admin"
+        description:
+          type: string
+          example: "Administrator role with full access."
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+    RoleCreateErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to create role"
+    RoleUpdateErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to update role"
+    RoleDeleteErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to delete role"
+    RoleGetErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to retrieve role"
+
+    RoleNotFoundResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Role with ID 9201edf1-a97c-4dc1-8ab2-f3351c7cbffa does not exist."
+
+    RoleValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Validation error."
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Name is required."
+              path:
+                type: string
+                example: "name"
+
+    PermissionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Create"
+        description:
+          type: string
+          example: "Create a new resource."
+      required:
+        - name
+
+    PermissionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "921126bb-e3b9-47d5-a519-d2fd5348d901"
+        name:
+          type: string
+          example: "Create"
+        description:
+          type: string
+          example: "Create a new resource."
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+    PermissionCreateErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to create permission"
+    PermissionUpdateErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string  
+          example: "Failed to update permission"
+    PermissionDeleteErrorResponse:  
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to delete permission"
+    PermissionGetErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to retrieve permission"
+
+    PermissionNotFoundResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Permission with ID 9201edf1-a97c-4dc1-8ab2-f3351c7cbffa does not exist."
+
+    PermissionValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Validation error."
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Name is required."
+              path:
+                type: string
+                example: "name"
+
+    PermissionGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Admin"
+        description:
+          type: string
+          example: "Administrator permission group with full access."  
+      required:
+        - name
+
+    PermissionGroupResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "921126bb-e3b9-47d5-a519-d2fd5348d901"
+        name:
+          type: string
+          example: "Admin"
+        description:
+          type: string
+          example: "Administrator permission group with full access."
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00Z"
+    PermissionGroupCreateErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to create permission group"
+    PermissionGroupUpdateErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to update permission group"
+    PermissionGroupDeleteErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Failed to delete permission group"
+    PermissionGroupGetErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string  
+          example: "Failed to retrieve permission group"
+
+    PermissionGroupNotFoundResponse:
+      type: object
+      properties:
+        message:
+          type: string  
+          example: "Permission group with ID 9201edf1-a97c-4dc1-8ab2-f3351c7cbffa does not exist."
+
+    PermissionGroupValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Validation error."
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Name is required."
+              path:
+                type: string
+                example: "name"
