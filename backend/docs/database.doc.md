@@ -24,7 +24,7 @@ Represents a user in the system.
 
 ### Indexes
 
-- `@@index([username, email, roleId])`
+- `@@index([username, email, roleId, name])`
 
 ---
 
@@ -100,7 +100,8 @@ Represents a permission that can be assigned to roles.
 - **description**: `String` - Description of the permission.
 - **createdAt**: `DateTime` - Timestamp of when the permission was created (default: now).
 - **updatedAt**: `DateTime` - Timestamp of the last time the permission was updated (auto-updated).
-- **roles**: `Role[]` - Relation to the `Role` model - **permissionGroupId**: `String` - Foreign key linking to the `PermissionGroup` model.
+- **roles**: `Role[]` - Relation to the `Role` model.
+- **permissionGroupId**: `String` - Foreign key linking to the `Permission Group` model.
 
 ### Indexes
 
@@ -136,10 +137,11 @@ Represents a log of actions performed by users in the system.
 - **action**: `String` - Description of the action performed.
 - **userId**: `String` - Foreign key linking to the `User ` model.
 - **createdAt**: `DateTime` - Timestamp of when the action was logged (default: now).
+- **details**: `Json?` - Optional details associated with the action.
 
 ### Indexes
 
-- `@@index([userId])`
+- `@@index([userId, timestamp, targetType, targetId])`
 
 ---
 
@@ -156,6 +158,4 @@ Represents activity logs for users in the system.
 
 ### Indexes
 
-- `@@index([userId])`
-
----
+- `@@index([userId, timestamp, action, actionType])`
