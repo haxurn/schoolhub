@@ -19,6 +19,7 @@ services:
     image: postgres:latest
     restart: always
     environment:
+    
       POSTGRES_USER: schoolhub
       POSTGRES_PASSWORD: SuperSecretPassword
       POSTGRES_DB: schoolhub
