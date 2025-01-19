@@ -12,6 +12,7 @@ export default function DashboardLoader(){
   const [show, setShow] = useState(false)
   return(
     <div > 
+      
       <nav className="nav">
       <div className="flex items-start">
       <SidebarTrigger />
@@ -20,8 +21,9 @@ export default function DashboardLoader(){
         <h1 className="text-black font-[family-name:var(--font-geist-sans)] font-bold text-xl">schoolhub</h1>
       </div>
       <div className="flex relative flex-shrink flex-row items-center gap-1   p-1">
-        <Button variant={"ghost"} className="text-black ">home</Button>
-        <Button variant={"ghost"} className="">help</Button>
+        <Button variant={"ghost"} className="">
+          <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  strokeWidth="2"  strokeLinecap="round"  strokeLinejoin="round"  className="icon icon-tabler icons-tabler-outline icon-tabler-help"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 17l0 .01" /><path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" /></svg>
+        </Button>
         <Button variant={"ghost"} className="relative " onClick={()=>{if(show!==true){setShow(true)}else{setShow(false)}}}>{role} actions
           <div className={show==true?`absolute smtrans top-12 flex flex-col p-3 items-center rounded-xl z-20 gap-4 bg-zinc-900`:"absolute opacity-0 smtrans -top-7 flex flex-col p-3 items-center rounded-xl gap-4 bg-zinc-900"}>
           <NavDisp role={role} />

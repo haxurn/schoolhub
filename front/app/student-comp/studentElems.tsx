@@ -19,12 +19,12 @@ import { Button } from "@/components/ui/button";
 const chartConfig = {
     grade: {
         label: "average",
-        color: "#000"
+        color: "#3e0480"
     }
 } satisfies ChartConfig
 export default function StudentComps(){
     return (
-        <div className="w-full flex flex-wrap mb-0 mt-3 mx-auto pb-0 p-3">
+        <div className="w-full flex flex-row flex-wrap mb-0 mt-3 mx-auto pb-0 p-3">
             <Card className="main-profile">
                 <div className="mono flex flex-wrap gap-6  items-center">
                     <Avatar className="ml-3">
@@ -32,7 +32,7 @@ export default function StudentComps(){
                         <AvatarFallback>IM</AvatarFallback>
                     </Avatar>
                  <div>
-                     Name: [name]<br/> Grade: [grade]  Section: [section]
+                     Name: [name]<br/> Grade: [grade]  Section: [section] <br /> id: [id number]
                      <p className="description">
                         [description of student]
                      </p>
@@ -45,28 +45,10 @@ export default function StudentComps(){
                         [name] performed [activity] 
                         <span className="text-left"> at [time]</span>
                     </div>
-                    <div className="act">
-                        [name] performed [activity] 
-                        <span className="text-left"> at [time]</span>
-                    </div>
-                    <div className="act">
-                        [name] performed [activity] 
-                        <span className="text-left"> at [time]</span>
-                    </div>
-                    <div className="act">
-                        [name] performed [activity] 
-                        <span className="text-left"> at [time]</span>
-                    </div>
-                    <div className="act">
-                        [name] performed [activity] 
-                        <span className="text-left"> at [time]</span>
-                    </div>
                     <Separator />
                     <div className="clubs">
                     <span className="sans">[name] is currently a member of..</span> <br />
                     <h2 >[club name]</h2>
-                    <h2>[club name]</h2>
-                    <h2>[club name]</h2>
                     </div> 
                 </div>
                 <h1 className="sans font-semibold text-lg ml-4">Achievements</h1>
@@ -76,15 +58,15 @@ export default function StudentComps(){
                 </div>
             </Card>
           
-            <div className="w-[43%] flex flex-col mx-auto">
+            <div className="min-w-[43%] w-auto flex flex-wrap flex-col my-3 mx-auto">
                 <Card className="stats">
                       <CardHeader>
                 <h1 className="text-center font-semibold sans">student grades</h1> <span>year: 
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button>select grade</Button>
+                            <Button className="hover:bg-purple-100" variant={"ghost"}>select grade</Button>
                             </PopoverTrigger>
-                        <PopoverContent>
+                        <PopoverContent className="flex justify-between items-center">
                             <Button>1</Button>
                             <Button>2</Button>
                             <Button>3</Button>
@@ -106,7 +88,7 @@ export default function StudentComps(){
     <ChartTooltip content={<ChartTooltipContent />} />
     <ChartLegend content={<ChartLegendContent />} />
                              <CartesianGrid vertical={false} />
-                             <Bar dataKey="grade" fill="#000" radius={4} />
+                             <Bar dataKey="grade" fill="#3e0480" radius={4} />
                   </BarChart>
                 </ChartContainer>
                 </Card>
@@ -131,9 +113,6 @@ export default function StudentComps(){
              </div>
                </div>
             </Card>
-           {/*  <div className="subject-result">
-               image gen here 
-            </div>*/}
         </div>
     )
 }
