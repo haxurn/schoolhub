@@ -1,1 +1,1 @@
-export const role = "student"
+export const role = "parent"

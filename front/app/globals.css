@@ -152,3 +152,6 @@ h2 {
 .school-announcements{
   @apply w-[98%] bg-[#fafafa] h-[300px] mx-auto mb-0 mt-6
 }
+.sidebtn {
+  @apply hover:bg-purple-100 text-sm sans text-left rounded-none
+}

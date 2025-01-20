@@ -1,4 +1,3 @@
-
 import { Separator } from "@/components/ui/separator";
 import school from "@/img/download.jpeg";
 import Image from "next/image";
@@ -23,6 +22,7 @@ const chartConfig = {
     }
 } satisfies ChartConfig
 export default function StudentComps(){
+    
     return (
         <div className="w-full flex flex-row flex-wrap mb-0 mt-3 mx-auto pb-0 p-3">
             <Card className="main-profile">
