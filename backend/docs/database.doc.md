@@ -144,18 +144,3 @@ Represents a log of actions performed by users in the system.
 - `@@index([userId, timestamp, targetType, targetId])`
 
 ---
-
-## UserActivity
-
-Represents activity logs for users in the system.
-
-### Fields
-
-- **id**: `String` (Primary Key) - Unique identifier for each user activity entry.
-- **activity**: `String` - Description of the user activity.
-- **userId**: `String` - Foreign key linking to the `User ` model.
-- **createdAt**: `DateTime` - Timestamp of when the activity was logged (default: now).
-
-### Indexes
-
-- `@@index([userId, timestamp, action, actionType])`
