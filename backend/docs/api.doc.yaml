@@ -10,8 +10,8 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:5000/api
-    description: Development server
+- url: http://localhost:5000/api
+  description: Development server
 
 paths:
   /auth/login:
@@ -19,8 +19,8 @@ paths:
       summary: User login
       description: Authenticate a user and return a JWT token along with user information.
       tags:
-        - Authentication
-      operationId: loginUser  
+      - Authentication
+      operationId: loginUser
       requestBody:
         required: true
         content:
@@ -52,14 +52,80 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  
+  /auth/password-reset-request:
+    post:
+      summary: Request password reset
+      tags:
+      - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+      responses:
+        '200':
+          description: Password reset link sent to your email.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPasswordResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/reset-password:
+    post:
+      summary: Reset password
+      tags:
+      - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordResetResponse'
+        '400':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidToken'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /roles:
     post:
       summary: Create a new role
       description: Creates a new role in the system.
       operationId: createRole
       tags:
-        - Roles
+      - Roles
       requestBody:
         required: true
         content:
@@ -84,14 +150,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoleCreateErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
 
     get:
       summary: Get all roles
       description: Retrieves a list of all roles in the system.
       operationId: getAllRoles
       tags:
-        - Roles
+      - Roles
       responses:
         '200':
           description: A list of roles.
@@ -106,28 +172,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ValidationErrorResponse'
         '500':
           description: Internal server error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoleGetErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /roles/{id}:
     get:
       summary: Get a role by ID
       description: Retrieves a specific role by its ID.
       tags:
-        - Roles
+      - Roles
       operationId: getRoleById
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the role to retrieve.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: The ID of the role to retrieve.
+        schema:
+          type: string
       responses:
         '200':
           description: Role retrieved successfully.
@@ -146,20 +212,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoleGetErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       summary: Update a role
       description: Updates a specific role by its ID.
       tags:
-        - Roles
+      - Roles
       operationId: updateRole
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the role to update.
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        description: The ID of the role to update.
+        schema:
+          type: string
       requestBody:
         required: true
         content:
@@ -190,20 +256,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoleGetErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Delete a role
       description: Deletes a specific role by its ID.
       tags:
-        - Roles
+      - Roles
       operationId: deleteRole
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: The ID of the role to delete.
-          schema:
-          type: string
+      - name: id
+        in: path
+        required: true
+        description: The ID of the role to delete.
+        schema:
+        type: string
       responses:
         '204':
           description: Role deleted successfully.
@@ -218,339 +284,359 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoleDeleteErrorResponse'
-    
+                $ref: '#/components/schemas/ErrorResponse'
+
   /permissions:
-      post:
-        summary: Create a new permission
-        description: Creates a new permission in the system.
-        operationId: createPermission
-        tags:
-          - Permissions
-        requestBody:
-          required: true
+    post:
+      summary: Create a new permission
+      description: Creates a new permission in the system.
+      operationId: createPermission
+      tags:
+      - Permissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionRequest'
+      responses:
+        '201':
+          description: Permission created successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PermissionRequest'
-        responses:
-          '201':
-            description: Permission created successfully.
-            content:
-              application/json:
-                schema:
+                $ref: '#/components/schemas/PermissionResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionValidationError'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get all permissions
+      description: Retrieves a list of all permissions in the system.
+      operationId: getAllPermissions
+      tags:
+      - Permissions
+      responses:
+        '200':
+          description: A list of permissions.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
                   $ref: '#/components/schemas/PermissionResponse'
-          '400':
-            description: Validation error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionValidationError'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionCreateErrorResponse'
-      get:
-        summary: Get all permissions
-        description: Retrieves a list of all permissions in the system.
-        operationId: getAllPermissions
-        tags:
-          - Permissions
-        responses:
-          '200':
-            description: A list of permissions.
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/PermissionResponse'
-          '400':
-            description: Validation error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGetErrorResponse'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGetErrorResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGetErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /permissions/{id}:
-      get:
-        summary: Get a permission by ID
-        description: Retrieves a specific permission by its ID.
-        tags:
-          - Permissions
-        operationId: getPermissionById
-        parameters:
-          - name: id
-            in: path
-            required: true
-            description: The ID of the permission to retrieve.
-            schema:
-              type: string
-        responses:
-          '200':
-            description: Permission retrieved successfully.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionResponse'
-          '404':
-            description: Permission not found.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionNotFoundResponse'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGetErrorResponse'
-      put:
-        summary: Update a permission
-        description: Updates a specific permission by its ID.
-        tags:
-          - Permissions
-        operationId: updatePermission
-        parameters:
-          - name: id
-            in: path
-            required: true
-            description: The ID of the permission to update.
-            schema:
-              type: string
-        requestBody:
-          required: true
+    get:
+      summary: Get a permission by ID
+      description: Retrieves a specific permission by its ID.
+      tags:
+      - Permissions
+      operationId: getPermissionById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the permission to retrieve.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Permission retrieved successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PermissionRequest'
-        responses:
-          '200':
-            description: Permission updated successfully.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionResponse'
-          '400':
-            description: Validation error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionValidationError'
-          '404':
-            description: Permission not found.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionNotFoundResponse'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGetErrorResponse'
-      delete:
-        summary: Delete a permission
-        description: Deletes a specific permission by its ID.
-        tags:
-          - Permissions
-        operationId: deletePermission
-        parameters:
-          - name: id
-            in: path
-            required: true
-            description: The ID of the permission to delete.
+                $ref: '#/components/schemas/PermissionResponse'
+        '404':
+          description: Permission not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update a permission
+      description: Updates a specific permission by its ID.
+      tags:
+      - Permissions
+      operationId: updatePermission
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the permission to update.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
             schema:
-              type: string
-        responses:
-          '204':
-            description: Permission deleted successfully.
-          '404':
-            description: Permission not found.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionNotFoundResponse'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionDeleteErrorResponse'
+              $ref: '#/components/schemas/PermissionRequest'
+      responses:
+        '200':
+          description: Permission updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionValidationError'
+        '404':
+          description: Permission not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a permission
+      description: Deletes a specific permission by its ID.
+      tags:
+      - Permissions
+      operationId: deletePermission
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the permission to delete.
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Permission deleted successfully.
+        '404':
+          description: Permission not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /permissions-groups:
-      post:
-        summary: Create a new permission group
-        description: Creates a new permission group in the system.
-        operationId: createPermissionGroup
-        tags:
-          - Permissions
-        requestBody:
-          required: true
+    post:
+      summary: Create a new permission group
+      description: Creates a new permission group in the system.
+      operationId: createPermissionGroup
+      tags:
+      - Permissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PermissionGroupRequest'
+      responses:
+        '201':
+          description: Permission group created successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PermissionGroupRequest'
-        responses:
-          '201':
-            description: Permission group created successfully.
-            content:
-              application/json:
-                schema:
+                $ref: '#/components/schemas/PermissionGroupResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupValidationError'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get all permission groups
+      description: Retrieves a list of all permission groups in the system.
+      operationId: getAllPermissions
+      tags:
+      - Permissions
+      responses:
+        '200':
+          description: A list of permission groups.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
                   $ref: '#/components/schemas/PermissionGroupResponse'
-          '400':
-            description: Validation error.
-            content:
-              application/json: 
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupValidationError'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupCreateErrorResponse'
-      get:
-        summary: Get all permission groups
-        description: Retrieves a list of all permission groups in the system.
-        operationId: getAllPermissions
-        tags:
-          - Permissions
-        responses:
-          '200':
-            description: A list of permission groups.
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/PermissionGroupResponse'
-          '400':
-            description: Validation error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /permissions-groups/{id}:
-      get:
-        summary: Get a permission group by ID
-        description: Retrieves a specific permission group by its ID.
-        tags:
-          - Permissions
-        operationId: getPermissionGroupById
-        parameters:
-          - name: id
-            in: path
-            required: true
-            description: The ID of the permission group to retrieve.
-            schema:
-              type: string
-        responses:
-          '200':
-            description: Permission group retrieved successfully.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupResponse'
-          '404':
-            description: Permission group not found.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
-      put:
-        summary: Update a permission group
-        description: Updates a specific permission group by its ID.
-        tags:
-          - Permissions
-        operationId: updatePermissionGroup
-        parameters:
-          - name: id
-            in: path            
-            required: true
-            description: The ID of the permission group to update.
-            schema:
-              type: string
-        requestBody:
-          required: true
+    get:
+      summary: Get a permission group by ID
+      description: Retrieves a specific permission group by its ID.
+      tags:
+      - Permissions
+      operationId: getPermissionGroupById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the permission group to retrieve.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Permission group retrieved successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PermissionGroupRequest'
-        responses:
-          '200':
-            description: Permission group updated successfully.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupResponse'
-          '400':
-            description: Validation error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupValidationError'
-          '404':
-            description: Permission group not found.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema: 
-                  $ref: '#/components/schemas/PermissionGroupGetErrorResponse'
-      delete:
-        summary: Delete a permission group
-        description: Deletes a specific permission group by its ID.
-        tags:
-          - Permissions
-        operationId: deletePermissionGroup
-        parameters:
-          - name: id
-            in: path
-            required: true
-            description: The ID of the permission group to delete.
+                $ref: '#/components/schemas/PermissionGroupResponse'
+        '404':
+          description: Permission group not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update a permission group
+      description: Updates a specific permission group by its ID.
+      tags:
+      - Permissions
+      operationId: updatePermissionGroup
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the permission group to update.
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
             schema:
-              type: string
-        responses:
-          '204':
-            description: Permission group deleted successfully.
-          '404':
-            description: Permission group not found.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/PermissionGroupDeleteErrorResponse'
-        security:
-          - bearerAuth: []
-            
+              $ref: '#/components/schemas/PermissionGroupRequest'
+      responses:
+        '200':
+          description: Permission group updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupResponse'
+        '400':
+          description: Validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupValidationError'
+        '404':
+          description: Permission group not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a permission group
+      description: Deletes a specific permission group by its ID.
+      tags:
+      - Permissions
+      operationId: deletePermissionGroup
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The ID of the permission group to delete.
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Permission group deleted successfully.
+        '404':
+          description: Permission group not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionGroupNotFoundResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    paths:
+  /logs:
+    get:
+      summary: Fetch audit logs
+      description: Retrieve a list of audit logs with optional filtering by userId and actionType.
+      parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/actionType'
+      responses:
+        '200':
+          description: A list of audit logs retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogList'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
 
 components:
   securitySchemes:
@@ -564,13 +650,13 @@ components:
       properties:
         username:
           type: string
-          example: 'john_doe'  
+          example: 'john_doe'
         password:
           type: string
           example: 'password123'
       required:
-        - username
-        - password
+      - username
+      - password
     LoginResponse:
       type: object
       properties:
@@ -602,7 +688,7 @@ components:
       properties:
         message:
           type: string
-          example: "Invalid username or password."
+          example: "Internal server error."
     ValidationErrorResponse:
       type: object
       properties:
@@ -618,7 +704,7 @@ components:
                 type: string
                 example: "Username is required."
               path:
-                type: string 
+                type: string
     RoleRequest:
       type: object
       properties:
@@ -629,7 +715,7 @@ components:
           type: string
           example: "Administrator role with full access."
       required:
-        - name
+      - name
 
     RoleResponse:
       type: object
@@ -711,7 +797,7 @@ components:
           type: string
           example: "Create a new resource."
       required:
-        - name
+      - name
 
     PermissionResponse:
       type: object
@@ -743,9 +829,9 @@ components:
       type: object
       properties:
         message:
-          type: string  
+          type: string
           example: "Failed to update permission"
-    PermissionDeleteErrorResponse:  
+    PermissionDeleteErrorResponse:
       type: object
       properties:
         message:
@@ -791,9 +877,9 @@ components:
           example: "Admin"
         description:
           type: string
-          example: "Administrator permission group with full access."  
+          example: "Administrator permission group with full access."
       required:
-        - name
+      - name
 
     PermissionGroupResponse:
       type: object
@@ -837,14 +923,14 @@ components:
       type: object
       properties:
         message:
-          type: string  
+          type: string
           example: "Failed to retrieve permission group"
 
     PermissionGroupNotFoundResponse:
       type: object
       properties:
         message:
-          type: string  
+          type: string
           example: "Permission group with ID 9201edf1-a97c-4dc1-8ab2-f3351c7cbffa does not exist."
 
     PermissionGroupValidationError:
@@ -864,3 +950,94 @@ components:
               path:
                 type: string
                 example: "name"
+
+    PasswordResetRequest:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          example: "jon@example.com"
+    ResetPasswordRequest:
+      type: object
+      required:
+      - token
+      - newPassword
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.........."
+        newPassword:
+          type: string
+          example: "P@ssw0rd123!"
+
+    UserNotFound:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "User not found."
+    InvalidToken:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Invalid or expired token."
+    PasswordResetResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Password reset successful."
+    ResetPasswordResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Password reset link sent to your email."
+  parameters:
+    userId:
+      name: userId
+      in: query
+      required: false
+      description: The ID of the user whose logs you want to retrieve.
+      schema:
+        type: string
+    actionType:
+      name: actionType
+      in: query
+      required: false
+      description: The type of action to filter logs by.
+      schema:
+        type: string
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the log entry.
+        action:
+          type: string
+          description: The action performed.
+        userId:
+          type: string
+          description: The ID of the user who performed the action.
+        targetId:
+          type: string
+          description: The ID of the target entity (if applicable).
+        targetType:
+          type: string
+          description: The type of the target entity (if applicable).
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when the action was performed.
+        details:
+          type: object
+          description: Additional details about the action (if any).
+
+    AuditLogList:
+      type: array
+      items:
+        $ref: '#/components/schemas/AuditLog'
