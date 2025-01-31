@@ -5,19 +5,7 @@ Welcome to the backend of the SchoolHub project! SchoolHub is a platform that pr
 ## Features
 
 - **User Authentication:** Secure login and registration with JWT tokens.
-- **Role-based Access Control:** Different roles (e.g., student, teacher, admin, parent) with access to specific features.
-- **School Data Management:** Manage students, courses, grades, and schedules.
-- **Communication:** Messaging between teachers and students.
-- **Parent Communication:** Messaging between parents and their children.
-- **Admin Dashboard:** Accessible by the admin for managing user roles and permissions.
-
-## Tech Stack
-
-- **Backend Framework:** Node.js with Express
-- **Language:** TypeScript
-- **Database:** Prisma ORM(PostgreSQL)
-- **Authentication:** JWT (JSON Web Tokens)
-- **Environment Management:** Node.js and bun
+- **Role-Based Access Control:** Role-based access control for different user roles (e.g., admin, teacher, student).
 
 ## Setup
 

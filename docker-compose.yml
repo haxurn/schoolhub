@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  backend:
+    build: ./backend
+    container_name: backend_c
+    depends_on:
+      - db
+    ports:
+      - 5000:5000
+    volumes:
+      - ./backend:/app
+      - backend_node-modules:/app/node_modules
+    env_file:
+      - ./backend/.env
+    stdin_open: true
+    tty: true
+  db:
+    container_name: db_c
+    image: postgres:latest
+    restart: always
+    environment:
+    
+      POSTGRES_USER: schoolhub
+      POSTGRES_PASSWORD: SuperSecretPassword
+      POSTGRES_DB: schoolhub
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_c
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@root.com
+      PGADMIN_DEFAULT_PASSWORD: SuperSecretPassword
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+volumes:
+  backend_node-modules:
+  postgres-data:
