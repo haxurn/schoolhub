@@ -28,10 +28,21 @@ model User {
 
   role         Role           @relation(fields: [roleId], references: [id], onDelete: Cascade)
   AuditLog     AuditLog[]
-  UserActivity UserActivity[]
+  passwordResets PasswordReset[]
 
   @@index([username, email, roleId, name])
   @@map("user")
+}
+
+model PasswordReset {
+  id     String @id @default(uuid())
+  userId String 
+  token  String @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
@@ -106,27 +117,13 @@ model AuditLog {
   id         String   @id @default(uuid())
   action     String
   userId     String?
-  targetId   String?
   targetType String?
   timestamp  DateTime @default(now())
   details    Json?
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  @@index([userId, timestamp, targetType, targetId])
+  @@index([userId, timestamp, targetType])
   @@map("audit_log")
 }
 
-model UserActivity {
-  id         String   @id @default(uuid())
-  userId     String
-  action     String
-  actionType String
-  timestamp  DateTime @default(now())
-  details    Json?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, timestamp, action, actionType])
-  @@map("user_activity")
-}
