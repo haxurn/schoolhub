@@ -1,5 +1,3 @@
-// backend/server.ts
-
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
@@ -11,17 +9,23 @@ import path from 'path';
 import authRoutes from './routes/auth.route';
 import roleRoutes from './routes/role.route';
 import permissionRoutes from './routes/permission.route';
+import auditLogRoutes from './routes/auditLog.route';
 import fs from 'fs';
+import requestIp from 'request-ip';
 
 dotenv.config();
 
 const app = express();
 
+
 // Middleware configuration
+app.set('trust proxy', true);
+app.use(requestIp.mw());
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // Allow credentials
 }));
 
 app.use(cookieParser());
@@ -29,9 +33,9 @@ app.use(helmet());
 app.use(express.json());
 setupSwagger(app);
 
-
 // Routes
-app.use('/api', authRoutes, roleRoutes, permissionRoutes);
+app.use('/api', authRoutes, roleRoutes, permissionRoutes, auditLogRoutes);
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
@@ -56,8 +60,6 @@ app.all('*', (req: Request, res: Response) => {
     res.status(405).send(pageContent);  // Only respond once
   });
 });
-
-
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error('🚨 Error:', err);
