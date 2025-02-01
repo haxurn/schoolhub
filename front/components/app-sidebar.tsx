@@ -84,7 +84,23 @@ export default function AppSidebar({role}:Roleprop){
                                          </SidebarFooter>
             </div>
     </div>
-    :""}
+    :role == "librarian"?
+        <div className="w-full flex flex-col items-center justify-between h-full">
+ <SidebarHeader>
+      <h1 className="sbhead">{role} options</h1>
+      </SidebarHeader>
+      <SidebarContent> 
+        <p>more options in the near future..</p>
+
+            </SidebarContent>
+            <div>
+              <Separator />
+                                         <SidebarFooter>
+                         <h1 className="text-sm">this project was made by students in vission academy</h1>
+                                         </SidebarFooter>
+            </div>
+        </div>
+        : ""}
     </Sidebar>
   )
 }
