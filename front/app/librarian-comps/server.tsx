@@ -1,9 +1,8 @@
 
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { CheckboxItem } from "@radix-ui/react-dropdown-menu";
 
-    const element:number[] = [];
+    let element:number[] = [];
 for (let i = 0; i < 6; i++) {
     element.push(i);
 }
@@ -32,10 +31,8 @@ function Booklist(){
     return (
         <>
         {element.map((ind)=> 
-        <> 
-            
             <Card key={ind} className="w-full rounded-none flex justify-evenly items-center p-1">
-             <input type="checkbox" />
+             <input type="checkbox" onChange={()=>{/**to remove an item from the list */}}/>
             <Separator orientation="vertical" className="h-8" />
              [book name]
              <Separator orientation="vertical" className="h-8" />
@@ -49,7 +46,6 @@ function Booklist(){
              <Separator orientation="vertical" className="h-8" />
              [reservation expire date]
             </Card>
-        </>
         )}
         </>
     )
