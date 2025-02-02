@@ -21,7 +21,7 @@ export default function LibComp(){
             </div>
            </div>
            <div className="w-[60%] flex gap-3 justify-end items-center ">
-            <Button className="">check in</Button> 
+            <Button className="">check in</Button> <Button>+  borrower</Button>
            </div>
         </Card>
         <div className="flex my-2 justify-between">

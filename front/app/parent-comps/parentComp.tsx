@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { StGraph } from "../student-comp/stserver";
 
 export default function ParentComp(){
     return (
@@ -20,12 +21,12 @@ export default function ParentComp(){
             <Button className="">add child</Button> 
            </div>
            </Card>
-           <div>
-            <Card>
-
+           <div className="flex flex-row flex-wrap my-4">
+            <Card  className="min-w-[37%] mx-auto">
+             student list here
             </Card>
-            <Card>
-                
+            <Card className="min-w-[57%] mx-auto">
+               <StGraph /> 
             </Card>
            </div>
         </div>

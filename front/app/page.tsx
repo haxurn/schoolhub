@@ -7,6 +7,7 @@ import { useState } from "react";
 import NavDisp from "./navDisplay";
 import { role } from "./role"
 import CompDisp from "./compDisplay";
+import { Card } from "@/components/ui/card";
 
 export default function DashboardLoader(){
   const [show, setShow] = useState(false)
@@ -36,6 +37,16 @@ export default function DashboardLoader(){
       <h1 className="text-black m-3 font-semibold font-[family-name:var(--font-geist-sans)] text-2xl">{role} dashboard</h1>
       <Separator className="w-3/4 my-0 mx-auto" orientation="horizontal"></Separator>
    <CompDisp role={role} />
+   <Card className="school-announcements">
+                 <h1 className="sans font-bold text-xl text-center m-2">school announcements</h1>
+                 <Separator />
+               <div className="act flex items-center gap-3">
+             <div className="h-8 w-8 rounded-full bg-[#eaeaea]"></div> <div className="flex flex-col">
+                <h3>[announcer]</h3>
+                <p>THIS HAS HAPPENED!!!</p>
+             </div>
+               </div>
+            </Card>
     </div>
   )
 }
