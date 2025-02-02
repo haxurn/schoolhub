@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import { Booklist, ReserveList } from "./server";
 
 export default function LibComp(){
     const [list,setList] = useState("Books borrowed")
@@ -32,19 +33,21 @@ export default function LibComp(){
         {list=="Books borrowed"?
         <div>
             <Card className="w-full flex justify-evenly items-center p-1">
-              book name <Separator orientation="vertical" className="h-8" />student<Separator orientation="vertical" className="h-8" />id<Separator orientation="vertical" className="h-8" />gender<Separator orientation="vertical" className="h-8" />grade level<Separator orientation="vertical" className="h-8" />due date
+             book name <Separator orientation="vertical" className="h-8" />student<Separator orientation="vertical" className="h-8" />id<Separator orientation="vertical" className="h-8" />gender<Separator orientation="vertical" className="h-8" />grade level<Separator orientation="vertical" className="h-8" />due date
             </Card>
             <Separator className="my-2" />
-            {/**data goes here */}
+             {/**data goes here */}
+            <Booklist />
         </div>
        
             :list=="Reservations"?
             <div>
             <Card className="w-full flex justify-evenly items-center p-1">
-              book name <Separator orientation="vertical" className="h-8" />student<Separator orientation="vertical" className="h-8" />id<Separator orientation="vertical" className="h-8" />gender<Separator orientation="vertical" className="h-8" />grade level<Separator orientation="vertical" className="h-8" />reservation expire date
+             borrowed<Separator orientation="vertical" className="h-8" />  book name <Separator orientation="vertical" className="h-8" />student<Separator orientation="vertical" className="h-8" />id<Separator orientation="vertical" className="h-8" />gender<Separator orientation="vertical" className="h-8" />grade level<Separator orientation="vertical" className="h-8" />reservation expire date
             </Card>
             <Separator className="my-2" />
              {/**data goes here */}
+             <ReserveList />
         </div>
             :""}
         </div>
