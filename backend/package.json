@@ -23,7 +23,7 @@
     "@types/lodash.escape": "^4.0.9",
     "@types/yamljs": "^0.2.34",
     "axios": "^1.8.3",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
