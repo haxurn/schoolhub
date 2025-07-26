@@ -29,6 +29,10 @@ model User {
   role         Role           @relation(fields: [roleId], references: [id], onDelete: Cascade)
   AuditLog     AuditLog[]
   passwordResets PasswordReset[]
+  
+  // School-specific relations
+  student      Student?
+  teacher      Teacher?
 
   @@index([username, email, roleId, name])
   @@map("user")
@@ -125,5 +129,222 @@ model AuditLog {
 
   @@index([userId, timestamp, targetType])
   @@map("audit_log")
+}
+
+// School Management Models
+
+model Student {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  studentId      String    @unique
+  firstName      String
+  lastName       String
+  email          String?   @unique
+  phone          String?
+  dateOfBirth    DateTime
+  address        String?
+  guardianName   String
+  guardianPhone  String
+  guardianEmail  String?
+  enrollmentDate DateTime  @default(now())
+  status         StudentStatus @default(ACTIVE)
+  grade          String
+  section        String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrollments    CourseEnrollment[]
+  attendances    Attendance[]
+  grades         Grade[]
+
+  @@index([studentId, firstName, lastName, grade])
+  @@map("student")
+}
+
+model Teacher {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  teacherId      String    @unique
+  firstName      String
+  lastName       String
+  email          String?   @unique
+  phone          String?
+  dateOfBirth    DateTime?
+  address        String?
+  qualification  String
+  experience     Int       // years of experience
+  salary         Decimal?
+  joinDate       DateTime  @default(now())
+  status         TeacherStatus @default(ACTIVE)
+  specialization String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courses        Course[]
+  classes        Class[]
+
+  @@index([teacherId, firstName, lastName])
+  @@map("teacher")
+}
+
+model Course {
+  id          String    @id @default(uuid())
+  courseCode  String    @unique
+  title       String
+  description String?
+  credits     Int
+  teacherId   String
+  semester    String
+  year        Int
+  status      CourseStatus @default(ACTIVE)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  teacher     Teacher             @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  enrollments CourseEnrollment[]
+  classes     Class[]
+  grades      Grade[]
+
+  @@index([courseCode, title, teacherId])
+  @@map("course")
+}
+
+model CourseEnrollment {
+  id         String    @id @default(uuid())
+  studentId  String
+  courseId   String
+  enrolledAt DateTime  @default(now())
+  status     EnrollmentStatus @default(ENROLLED)
+
+  student    Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course     Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+  @@map("course_enrollment")
+}
+
+model Class {
+  id          String    @id @default(uuid())
+  courseId    String
+  teacherId   String
+  room        String
+  dayOfWeek   DayOfWeek
+  startTime   String    // Format: "HH:MM"
+  endTime     String    // Format: "HH:MM"
+  startDate   DateTime
+  endDate     DateTime?
+  status      ClassStatus @default(SCHEDULED)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  teacher     Teacher      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  attendances Attendance[]
+
+  @@index([courseId, teacherId, dayOfWeek])
+  @@map("class")
+}
+
+model Attendance {
+  id        String    @id @default(uuid())
+  studentId String
+  classId   String
+  date      DateTime
+  status    AttendanceStatus
+  remarks   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class     Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, classId, date])
+  @@index([studentId, date])
+  @@map("attendance")
+}
+
+model Grade {
+  id         String    @id @default(uuid())
+  studentId  String
+  courseId   String
+  examType   ExamType
+  marks      Decimal
+  maxMarks   Decimal
+  percentage Decimal
+  grade      String    // A+, A, B+, etc.
+  remarks    String?
+  examDate   DateTime
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  student    Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course     Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, courseId, examType])
+  @@map("grade")
+}
+
+// Enums
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  GRADUATED
+  TRANSFERRED
+  SUSPENDED
+}
+
+enum TeacherStatus {
+  ACTIVE
+  INACTIVE
+  ON_LEAVE
+  TERMINATED
+}
+
+enum CourseStatus {
+  ACTIVE
+  INACTIVE
+  COMPLETED
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  COMPLETED
+  DROPPED
+  TRANSFERRED
+}
+
+enum ClassStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum ExamType {
+  QUIZ
+  MIDTERM
+  FINAL
+  ASSIGNMENT
+  PROJECT
+  PRACTICAL
 }
 

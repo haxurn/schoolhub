@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.route';
 import roleRoutes from './routes/role.route';
 import permissionRoutes from './routes/permission.route';
 import auditLogRoutes from './routes/auditLog.route';
+import studentRoutes from './routes/student.route';
 import fs from 'fs';
 import requestIp from 'request-ip';
 
@@ -35,6 +36,7 @@ setupSwagger(app);
 
 // Routes
 app.use('/api', authRoutes, roleRoutes, permissionRoutes, auditLogRoutes);
+app.use('/api/students', studentRoutes);
 
 
 app.use(express.static(path.join(__dirname, 'public')));
